@@ -1,7 +1,9 @@
+const fs = require("fs");
+
 class Head {
   constructor() {
     this.num = 10;
-    this.filePaths;
+    this.filePaths = [];
   }
 
   parsedOptions(userOptions) {
