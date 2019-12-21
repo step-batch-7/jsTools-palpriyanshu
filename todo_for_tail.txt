@@ -1,7 +1,0 @@
-1. -c with no takes characters from last
--n with no takes lines from last (default is 10)
--f file names take last 10 lines from each file and specified the file names also
-  and wait for input after completion
- -r with file no take lines from last and print in reverse order
-   by default it takes all lines
-   it can be used with any combination
