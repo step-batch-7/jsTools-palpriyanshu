@@ -1,9 +1,20 @@
 const fs = require("fs");
+const fileSys = {
+  exists: fs.existsSync,
+  readFile: fs.readFileSync
+};
 
 class Head {
   constructor() {
     this.num = 10;
     this.filePaths = [];
+  }
+
+  loadLines(parsedOptions, fileSys) {
+    console.log(parsedOptions.filePaths[0]);
+    if (!fs.existsSync(parsedOptions.filePaths[0])) {
+    }
+    return fs.readFileSync(parsedOptions.filePaths[0], "utf8");
   }
 
   parsedOptions(userOptions) {

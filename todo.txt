@@ -1,0 +1,35 @@
+v0.0.1
+1. node head one.txt 
+    a. head one.txt (file having atLeast 10 lines)
+    b. head one.txt (file having less than 10 lines)
+    c. head two.txt (file that does not exist)
+
+* appTest
+  1.a-- node head.js one.txt
+      1
+      2
+      3
+      4
+      5
+      6
+      7
+      8
+      9
+      10
+
+  1.b-- node head.js one.txt
+       1
+       2
+       3
+
+  1.c-- node head.js two.txt
+       head: two.txt: No such file or directory  
+
+* unit-Test 
+  --> filterOptions
+  --> parsedOptions
+  --> loadFiles     
+  --> extractFirstNLines
+  --> joinLines
+  --> generateErrorMsg
+

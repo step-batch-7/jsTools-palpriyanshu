@@ -1,4 +1,5 @@
 const assert = require("assert");
+const fs = require("fs");
 const Head = require("../src/header.js");
 
 describe("Head", function() {
@@ -33,4 +34,12 @@ describe("Head", function() {
       assert.deepStrictEqual(header.parsedOptions(userOptions), expected);
     });
   });
+
+  // describe("loadLines", function() {
+  //   it("should load the lines from file when file path is exists", function() {
+  //     const header = new Head();
+  //     const parsedOptions = { filePaths: ["head.js"], num: 10 };
+  //     assert.strictEqual(header.loadLines(parsedOptions), content);
+  //   });
+  // });
 });
