@@ -1,0 +1,101 @@
+1. node head one.txt ==> default case
+    a. head one.txt (file having atLeast 10 lines)
+    b. head one.txt (file having less than 10 lines)
+      handled in [1a] 
+    c. head two.txt (file that does not exist)
+
+2. node head -n 3 one.txt  ==> specified lines
+    a.  head -n 3 one.txt
+    handled in [1a]
+    b.  head -n 0 one.txt
+ 
+3. cat one.txt |node head (from std input)
+
+4. cat one.txt |node head.js -n 3
+
+5. node head one.txt two.txt ==>multipleFiles
+    a. head one.txt two.txt
+    b. head -n 3 one.txt two.txt
+
+6. cat one.txt two.txt |node head -n 3  can be handled in (4)
+  ______________________________________________
+} [1.a] output :lines of text ==> headLines
+      1
+      2
+      3
+      4
+      5
+      6
+      7
+      8
+      9
+      10
+  input : object ==> lines, no of lines
+      {lines : {one.txt:['1','2','3'...'20']}, num : lineNo}
+  name ==> joinFirstNLines
+--> note : it will join and gives back either (min of 10 and no of lines) or no.of lines specified
+
+
+[1.b] output : text ==> errorText
+      head: one.txt: No such file or directory
+ input : text ==> filePath
+      'one.txt'
+  name ==> generateErrorMsg
+
+[1.c] output : text ==> errorText
+      head: illegal line count -- lineNo
+ input : text  ==> lineNo
+    lineNo
+  name ==> generateErrorMsg
+[1.d] output :lines of text ==> headLines
+==> one.txt <==
+      1
+      2
+      3
+      
+==> two.txt <==
+      1
+      2
+      3
+      
+  input : object ==> lines, no of lines
+      {lines : {one.txt:['1','2','3'...'20'],two.txt:['1','2'..'20']},num : lineNo}
+  name ==> joinFirstNLines
+
+
+_________________________________________________________
+
+[2.a] output : object==> lines,num,error 
+      {lines : [['1','2','3'...'20']], num : lineNo, filePath:["one.txt"]} or {error : ENOENT} 
+      or
+      {lines : [['1','2','3'...'20'],['1','2'..'20']],num : lineNo,filePath:["one.txt","two.txt"]}
+  input :array of text ==> filePath and lineNo
+      ['one.txt',lineNo] or ['one.txt','two.txt',lineNo]
+  name ==> loadLines
+
+[2.b]output : object==> lines,lineNo 
+      {lines : [['1','2','3'...'20']], num : lineNo} or {error : ENOENT} 
+  input :object ==> lineNo
+      [lineNo]
+  name ==> loadLinesFromStdIO
+---------------------------------------------------------
+
+[3] output :array of text ==> filePath and lineNo
+      ['one.txt',lineNo] or [lineNo] or ['one.txt','two.txt',lineNo]
+  input : object of filePath and lineNo ==> userOptions 
+      1. {filePath: ['one.txt'],num: lineNo} or  {num : LineNo}
+      or {filePath: ['one.txt','two.txt'],num: lineNo} 
+  name ==> parseOptions  
+----------------------------------------------------------
+
+ [4] output : object of filePath and lineNo ==> userOptions
+       {filePath : ['one.txt'], num: LineNo} or {num : LineNo}
+  input : array of text ==> cmdLineArgs
+        1. ["node","head","one.txt"]
+        2. ["node","head","-n",3,"one.txt"]
+        3. ["node","head"]
+        4. ["node","head","-n",lineNo]
+        5. ["node","head","one.txt","two.txt"]
+        6. ["node","head","-n",3,"one.txt","two.txt"]
+  name ==> filterUserOptions
+_______________________________________________________
