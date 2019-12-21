@@ -6,11 +6,19 @@ class Head {
     this.filePaths = [];
   }
 
+  extractFirstNLines(lines) {
+    return lines
+      .split("\n")
+      .filter((line, index) => index < this.num)
+      .join("\n");
+  }
+
   loadLines(fileSys, path) {
     if (!fileSys.exists(path, "utf8")) {
       return (this.error = `head: ${path}: No such file or directory`);
     }
-    return fileSys.reader(path, "utf8");
+    const lines = fileSys.reader(path, "utf8");
+    return { lines: [[lines]], num: this.num, filePath: [path] };
   }
 
   parseOptions(userOptions) {

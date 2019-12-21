@@ -5,9 +5,9 @@ const Head = require("../src/head.js");
 describe("Head", function() {
   describe("filterUserOptions", function() {
     it("should give user options when cmd line args are given", function() {
-      const header = new Head();
+      const head = new Head();
       assert.deepStrictEqual(
-        header.filterUserOptions(["node", "head.js", "one.txt"]),
+        head.filterUserOptions(["node", "head.js", "one.txt"]),
         ["one.txt"]
       );
     });
@@ -15,29 +15,29 @@ describe("Head", function() {
 
   describe("parsedOptions", function() {
     it("should parsed the userOptions when only one file is given", function() {
-      const header = new Head();
+      const head = new Head();
       const expected = { filePaths: ["one.txt"], num: 10 };
-      assert.deepStrictEqual(header.parseOptions(["one.txt"]), expected);
+      assert.deepStrictEqual(head.parseOptions(["one.txt"]), expected);
     });
 
     it("should parsed the userOptions when more than one file is given", function() {
-      const header = new Head();
+      const head = new Head();
       const userOptions = ["one.txt", "two.txt"];
       const expected = { filePaths: ["one.txt", "two.txt"], num: 10 };
-      assert.deepStrictEqual(header.parseOptions(userOptions), expected);
+      assert.deepStrictEqual(head.parseOptions(userOptions), expected);
     });
 
     it("should parsed the userOptions when number of lines are specified ", function() {
-      const header = new Head();
+      const head = new Head();
       const userOptions = ["-n", 3, "one.txt"];
       const expected = { filePaths: ["one.txt"], num: 3 };
-      assert.deepStrictEqual(header.parseOptions(userOptions), expected);
+      assert.deepStrictEqual(head.parseOptions(userOptions), expected);
     });
   });
 
   describe("loadLines", function() {
     it("should load the lines when file exists", function() {
-      const header = new Head();
+      const head = new Head();
       const fileSys = {
         exists: function(path) {
           assert.equal(path, "path");
@@ -48,12 +48,12 @@ describe("Head", function() {
           return " ";
         }
       };
-      const expected = { lines: [[" "]], num: 10 };
-      assert.deepStrictEqual(header.loadLines(fileSys, "path"), " ");
+      const expected = { lines: [[" "]], num: 10, filePath: ["path"] };
+      assert.deepStrictEqual(head.loadLines(fileSys, "path"), expected);
     });
 
     it("should not load the lines when file does not exists", function() {
-      const header = new Head();
+      const head = new Head();
       const fileSys = {
         exists: function(path) {
           assert.equal(path, "path");
@@ -65,9 +65,26 @@ describe("Head", function() {
         }
       };
       assert.strictEqual(
-        header.loadLines(fileSys, "path"),
+        head.loadLines(fileSys, "path"),
         `head: path: No such file or directory`
       );
+    });
+  });
+
+  describe("extractFirstNLines", function() {
+    it("should extract the first N lines when Lines are more than given lines", function() {
+      const head = new Head();
+      const lines = `1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12`;
+      assert.strictEqual(
+        head.extractFirstNLines(lines),
+        `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`
+      );
+    });
+
+    it("should give all lines when Lines in file are less than given lines", function() {
+      const head = new Head();
+      const lines = `1\n2\n3`;
+      assert.strictEqual(head.extractFirstNLines(lines), `1\n2\n3`);
     });
   });
 });

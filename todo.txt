@@ -29,7 +29,7 @@ v0.0.1
 ✔️ --> filterOptions
 ✔️ --> parsedOptions
 ✔️ --> loadFiles     
-  --> extractFirstNLines
+✔️ --> extractFirstNLines
   --> joinLines
   --> generateErrorMsg
 
