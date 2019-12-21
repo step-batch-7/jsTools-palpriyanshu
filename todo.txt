@@ -26,9 +26,9 @@ v0.0.1
        head: two.txt: No such file or directory  
 
 * unit-Test 
-  --> filterOptions
-  --> parsedOptions
-  --> loadFiles     
+✔️ --> filterOptions
+✔️ --> parsedOptions
+✔️ --> loadFiles     
   --> extractFirstNLines
   --> joinLines
   --> generateErrorMsg

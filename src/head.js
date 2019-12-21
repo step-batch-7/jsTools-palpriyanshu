@@ -6,13 +6,14 @@ class Head {
     this.filePaths = [];
   }
 
-  loadLines(parsedOptions) {
-    if (!fs.existsSync(parsedOptions.filePaths[0])) {
+  loadLines(fileSys, path) {
+    if (!fileSys.exists(path, "utf8")) {
+      return (this.error = `head: ${path}: No such file or directory`);
     }
-    return fs.readFileSync(parsedOptions.filePaths[0], "utf8");
+    return fileSys.reader(path, "utf8");
   }
 
-  parsedOptions(userOptions) {
+  parseOptions(userOptions) {
     const numIndex = userOptions.indexOf("-n");
     this.filePaths = userOptions;
     if (userOptions.includes("-n")) {
