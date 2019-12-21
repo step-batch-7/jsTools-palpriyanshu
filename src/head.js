@@ -6,11 +6,15 @@ class Head {
     this.filePaths = [];
   }
 
-  extractFirstNLines(lines) {
-    return lines
+  joinLines(lines) {
+    return lines.join("\n");
+  }
+
+  extractFirstNLines(lines, path) {
+    const extractedLines = lines
       .split("\n")
-      .filter((line, index) => index < this.num)
-      .join("\n");
+      .filter((line, index) => index < this.num);
+    return { lines: [extractedLines], filePath: [path] };
   }
 
   loadLines(fileSys, path) {

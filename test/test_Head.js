@@ -75,16 +75,28 @@ describe("Head", function() {
     it("should extract the first N lines when Lines are more than given lines", function() {
       const head = new Head();
       const lines = `1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12`;
-      assert.strictEqual(
-        head.extractFirstNLines(lines),
-        `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`
-      );
+      const expected = {
+        lines: [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]],
+        filePath: ["path"]
+      };
+      assert.deepStrictEqual(head.extractFirstNLines(lines, "path"), expected);
     });
 
     it("should give all lines when Lines in file are less than given lines", function() {
       const head = new Head();
       const lines = `1\n2\n3`;
-      assert.strictEqual(head.extractFirstNLines(lines), `1\n2\n3`);
+      const expected = {
+        lines: [["1", "2", "3"]],
+        filePath: ["path"]
+      };
+      assert.deepStrictEqual(head.extractFirstNLines(lines, "path"), expected);
+    });
+  });
+
+  describe("joinLines", function() {
+    it("should Join the lines", function() {
+      const head = new Head();
+      assert.strictEqual(head.joinLines(["1", "2", "3"]), "1\n2\n3");
     });
   });
 });

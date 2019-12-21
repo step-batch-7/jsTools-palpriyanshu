@@ -30,6 +30,6 @@ v0.0.1
 ✔️ --> parsedOptions
 ✔️ --> loadFiles     
 ✔️ --> extractFirstNLines
-  --> joinLines
+✔️ --> joinLines
   --> generateErrorMsg
 
