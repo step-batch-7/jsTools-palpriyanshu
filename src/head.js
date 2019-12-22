@@ -13,7 +13,7 @@ class Head {
   }
 
   joinLines(lines) {
-    if (this.error !== "") return;
+    if (this.error !== "") return "";
     return lines.lines[0].join("\n");
   }
 

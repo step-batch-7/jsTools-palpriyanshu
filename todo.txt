@@ -5,7 +5,7 @@ v0.0.1
   ✔️  c. head two.txt (file that does not exist)
 
 * appTest
-  1.a-- node head.js one.txt
+ ✔️ 1.a-- node head.js one.txt
       1
       2
       3
