@@ -1,28 +1,35 @@
 const fs = require("fs");
+const { stderr } = require("process");
+
+const generateErrorMsg = function(error) {
+  stderr.write(`${error}\n`);
+};
 
 class Head {
   constructor() {
     this.num = 10;
     this.filePaths = [];
+    this.error = "";
   }
 
   joinLines(lines) {
-    return lines.join("\n");
+    if (this.error !== "") return;
+    return lines.lines[0].join("\n");
   }
 
   extractFirstNLines(lines, path) {
-    const extractedLines = lines
-      .split("\n")
-      .filter((line, index) => index < this.num);
+    const listOfLines = lines.split("\n");
+    const extractedLines = listOfLines.slice(0, this.num);
     return { lines: [extractedLines], filePath: [path] };
   }
 
-  loadLines(fileSys, path) {
-    if (!fileSys.exists(path, "utf8")) {
-      return (this.error = `head: ${path}: No such file or directory`);
+  loadLines(fileSys, path, generateErrorMsg) {
+    if (!fileSys.exists(`${path}`, "utf8")) {
+      this.error = `head: ${path}: No such file or directory`;
+      return generateErrorMsg(this.error);
     }
-    const lines = fileSys.reader(path, "utf8");
-    return { lines: [[lines]], num: this.num, filePath: [path] };
+    const lines = fileSys.reader(`${path}`, "utf8");
+    return this.extractFirstNLines(lines, path);
   }
 
   parseOptions(userOptions) {
@@ -34,10 +41,6 @@ class Head {
     }
     return { filePaths: this.filePaths, num: this.num };
   }
-
-  filterUserOptions(args) {
-    return args.slice(2);
-  }
 }
 
-module.exports = Head;
+module.exports = { Head, generateErrorMsg };

@@ -1,8 +1,8 @@
 v0.0.1
 1. node head one.txt 
-    a. head one.txt (file having atLeast 10 lines)
-    b. head one.txt (file having less than 10 lines)
-    c. head two.txt (file that does not exist)
+  ✔️  a. head one.txt (file having atLeast 10 lines)
+  ✔️  b. head one.txt (file having less than 10 lines)
+  ✔️  c. head two.txt (file that does not exist)
 
 * appTest
   1.a-- node head.js one.txt
@@ -31,5 +31,5 @@ v0.0.1
 ✔️ --> loadFiles     
 ✔️ --> extractFirstNLines
 ✔️ --> joinLines
-  --> generateErrorMsg
+✔️ --> generateErrorMsg
 

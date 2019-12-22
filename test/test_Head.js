@@ -1,18 +1,8 @@
 const assert = require("assert");
 const fs = require("fs");
-const Head = require("../src/head.js");
+const { Head } = require("../src/head.js");
 
 describe("Head", function() {
-  describe("filterUserOptions", function() {
-    it("should give user options when cmd line args are given", function() {
-      const head = new Head();
-      assert.deepStrictEqual(
-        head.filterUserOptions(["node", "head.js", "one.txt"]),
-        ["one.txt"]
-      );
-    });
-  });
-
   describe("parsedOptions", function() {
     it("should parsed the userOptions when only one file is given", function() {
       const head = new Head();
@@ -48,7 +38,10 @@ describe("Head", function() {
           return " ";
         }
       };
-      const expected = { lines: [[" "]], num: 10, filePath: ["path"] };
+      const expected = {
+        lines: [[" "]],
+        filePath: ["path"]
+      };
       assert.deepStrictEqual(head.loadLines(fileSys, "path"), expected);
     });
 
@@ -64,9 +57,13 @@ describe("Head", function() {
           return " ";
         }
       };
+
+      const generateErrorMessage = function() {
+        return `head: path: no such file or directory`;
+      };
       assert.strictEqual(
-        head.loadLines(fileSys, "path"),
-        `head: path: No such file or directory`
+        head.loadLines(fileSys, "path", generateErrorMessage),
+        generateErrorMessage()
       );
     });
   });
@@ -96,7 +93,8 @@ describe("Head", function() {
   describe("joinLines", function() {
     it("should Join the lines", function() {
       const head = new Head();
-      assert.strictEqual(head.joinLines(["1", "2", "3"]), "1\n2\n3");
+      const lines = { lines: [["1", "2", "3"]] };
+      assert.strictEqual(head.joinLines(lines), "1\n2\n3");
     });
   });
 });
