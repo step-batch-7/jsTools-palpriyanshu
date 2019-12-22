@@ -33,12 +33,7 @@ class Head {
   }
 
   parseOptions(userOptions) {
-    const numIndex = userOptions.indexOf("-n");
     this.filePaths = userOptions;
-    if (userOptions.includes("-n")) {
-      this.num = userOptions[numIndex + 1];
-      this.filePaths = userOptions.slice(2);
-    }
     return { filePaths: this.filePaths, num: this.num };
   }
 }

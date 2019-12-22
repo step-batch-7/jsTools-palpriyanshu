@@ -16,13 +16,6 @@ describe("Head", function() {
       const expected = { filePaths: ["one.txt", "two.txt"], num: 10 };
       assert.deepStrictEqual(head.parseOptions(userOptions), expected);
     });
-
-    it("should parsed the userOptions when number of lines are specified ", function() {
-      const head = new Head();
-      const userOptions = ["-n", 3, "one.txt"];
-      const expected = { filePaths: ["one.txt"], num: 3 };
-      assert.deepStrictEqual(head.parseOptions(userOptions), expected);
-    });
   });
 
   describe("loadLines", function() {
