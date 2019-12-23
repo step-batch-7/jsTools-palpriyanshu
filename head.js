@@ -2,7 +2,8 @@ const { performHeadOperation } = require("./src/performHead.js");
 
 const main = function() {
   const userOptions = process.argv.slice(2);
-  console.log(performHeadOperation(userOptions));
+  const result = performHeadOperation(userOptions);
+  result.key(result.value);
 };
 
 main();

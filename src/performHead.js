@@ -1,11 +1,21 @@
 const fs = require("fs");
 const {
   parseOptions,
-  loadLines,
+  loadContents,
   extractFirstNLines,
-  joinLines,
-  generateErrorMsg
+  joinLines
 } = require("./head.js");
+
+const getResult = function(lines, joinedLines) {
+  const result = {};
+  result.key = console.log;
+  result.value = joinedLines;
+  if (lines.error) {
+    result.key = console.error;
+    result.value = lines.error;
+  }
+  return result;
+};
 
 const performHeadOperation = function(userOptions) {
   const fileSys = {
@@ -14,19 +24,15 @@ const performHeadOperation = function(userOptions) {
   };
   let errorStatus = { isError: false };
   const parsedOptions = parseOptions(userOptions, errorStatus);
-  const lines = loadLines(
-    fileSys,
-    parsedOptions.filePaths,
-    errorStatus,
-    generateErrorMsg
-  );
+  const lines = loadContents(fileSys, parsedOptions.filePaths, errorStatus);
 
   const extractedLines = extractFirstNLines(
-    lines,
+    lines.lines,
     parsedOptions.num,
     errorStatus
   );
-  return joinLines(extractedLines.lines, errorStatus);
+  const joinedLines = joinLines(extractedLines.lines, errorStatus);
+  return getResult(lines, joinedLines);
 };
 
 module.exports = { performHeadOperation };

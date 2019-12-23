@@ -17,13 +17,15 @@ v0.0.1
       9
       10
 
-  1.b-- node head.js one.txt
+✔️  1.b-- node head.js one.txt
        1
        2
        3
 
-  1.c-- node head.js two.txt
+✔️  1.c-- node head.js two.txt
        head: two.txt: No such file or directory  
+
+* test pseudo main       
 
 * unit-Test 
 ✔️ --> filterOptions

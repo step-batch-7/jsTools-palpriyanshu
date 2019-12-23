@@ -1,10 +1,3 @@
-const fs = require("fs");
-const { stderr } = require("process");
-
-const generateErrorMsg = function(error) {
-  stderr.write(`${error}\n`);
-};
-
 const joinLines = function(lines, errorStatus) {
   if (errorStatus.isError) return "";
   return lines[0].join("\n");
@@ -17,14 +10,15 @@ const extractFirstNLines = function(lines, num, errorStatus) {
   return { lines: [extractedLines] };
 };
 
-const loadLines = function(fileSys, paths, errorStatus, generateErrorMsg) {
+const loadContents = function(fileSys, paths, errorStatus) {
+  const content = {};
   if (!fileSys.exists(`${paths[0]}`, "utf8")) {
-    error = `head: ${paths[0]}: No such file or directory`;
+    content.error = `head: ${paths[0]}: No such file or directory`;
     errorStatus.isError = true;
-    return generateErrorMsg(error);
+    return content;
   }
-  const lines = fileSys.reader(`${paths[0]}`, "utf8");
-  return lines;
+  content.lines = fileSys.reader(`${paths[0]}`, "utf8");
+  return content;
 };
 
 const parseOptions = function(userOptions) {
@@ -33,8 +27,7 @@ const parseOptions = function(userOptions) {
 
 module.exports = {
   parseOptions,
-  loadLines,
+  loadContents,
   extractFirstNLines,
-  joinLines,
-  generateErrorMsg
+  joinLines
 };
