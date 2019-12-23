@@ -6,17 +6,6 @@ const {
   joinLines
 } = require("./head.js");
 
-const getResult = function(lines, joinedLines) {
-  const result = {};
-  result.key = console.log;
-  result.value = joinedLines;
-  if (lines.error) {
-    result.key = console.error;
-    result.value = lines.error;
-  }
-  return result;
-};
-
 const performHeadOperation = function(userOptions) {
   const fileSys = {
     exists: fs.existsSync,
@@ -32,7 +21,9 @@ const performHeadOperation = function(userOptions) {
     errorStatus
   );
   const joinedLines = joinLines(extractedLines.lines, errorStatus);
-  return getResult(lines, joinedLines);
+  if (joinedLines == undefined) joinLines = "";
+  if (lines.error == undefined) lines.error = "";
+  return { output: joinedLines, error: lines.error };
 };
 
 module.exports = { performHeadOperation };
