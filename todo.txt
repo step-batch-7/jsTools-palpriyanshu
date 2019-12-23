@@ -1,8 +1,8 @@
 v0.0.1
-1. node head one.txt 
-  ✔️  a. head one.txt (file having atLeast 10 lines)
-  ✔️  b. head one.txt (file having less than 10 lines)
-  ✔️  c. head two.txt (file that does not exist)
+1. node head.js one.txt 
+  ✔️  a. head.js one.txt (file having atLeast 10 lines)
+  ✔️  b. head.js one.txt (file having less than 10 lines)
+  ✔️  c. head.js badFile.txt (file that does not exist)
 
 * appTest
  ✔️ 1.a-- node head.js one.txt
@@ -18,12 +18,12 @@ v0.0.1
       10
 
 ✔️  1.b-- node head.js one.txt
-       1
-       2
-       3
+      1
+      2
+      3
 
 ✔️  1.c-- node head.js two.txt
-       head: two.txt: No such file or directory  
+      head: two.txt: No such file or directory  
 
 ✔️ * test pseudo main       
 
@@ -34,4 +34,31 @@ v0.0.1
 ✔️ --> extractFirstNLines
 ✔️ --> joinLines
 ✔️ --> generateErrorMsg
+------------------------------------------------------------
+v0.0.2
+node head.js -n 3 one.txt
+  a.  head -n 3 one.txt  
+  b.  head -n 0 one.txt  (error --illegal count)
+  c.  head -p 8 one.txt  (error --illegal option)
+  d.  head  n 2 one.txt  (error --no such file or directory)
 
+* appTest
+  2.a   node head.js -n 3 one.txt
+       1
+       2
+       3
+
+  2.b   node head.js -n 0 one.txt
+       head: illegal line count -- 0
+
+  2.c   node head.js -n 0 one.txt
+       head: illegal option -- p
+       usage: head [-n lines | -c bytes] [file ...]
+
+  2.d   node head.js n 2 one.txt
+       head: n: No such file or directory
+       head: 2: No such file or directory
+       head: one.txt: No such file or directory
+
+  2.e  node head.js -n 3 badFile.txt
+       head: badFile.txt: No such file or directory  (handled in 1.c)

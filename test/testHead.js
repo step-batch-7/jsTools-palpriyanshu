@@ -4,7 +4,6 @@ const {
   parseOptions,
   loadContents,
   extractFirstNLines,
-  joinLines,
   performHeadOperation
 } = require("../src/headLib.js");
 
