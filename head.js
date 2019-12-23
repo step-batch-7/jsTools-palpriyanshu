@@ -1,4 +1,4 @@
-const { performHeadOperation } = require("./src/head.js");
+const { performHeadOperation } = require("./src/headLib.js");
 
 const main = function() {
   const userOptions = process.argv.slice(2);

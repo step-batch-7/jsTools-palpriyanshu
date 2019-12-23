@@ -6,7 +6,7 @@ const {
   extractFirstNLines,
   joinLines,
   performHeadOperation
-} = require("../src/head.js");
+} = require("../src/headLib.js");
 
 describe("parsedOptions", function() {
   it("should parsed the userOptions when only one file is given", function() {
