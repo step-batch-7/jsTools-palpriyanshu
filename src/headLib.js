@@ -1,54 +1,38 @@
 const fs = require("fs");
 
-const joinLines = function(lines, errorStatus) {
-  if (errorStatus.isError) return "";
-  return lines[0].join("\n");
-};
-
-const extractFirstNLines = function(lines, num, errorStatus) {
-  if (errorStatus.isError) return {};
+const extractFirstNLines = function(lines, parsedOptions) {
+  if (parsedOptions.isError) return "";
   const listOfLines = lines.split("\n");
-  const extractedLines = listOfLines.slice(0, num);
-  return { lines: [extractedLines] };
+  const extractedLines = listOfLines.slice(0, parsedOptions.num).join("\n");
+  return extractedLines;
 };
 
-const loadContents = function(fileSys, paths, errorStatus) {
+const loadContents = function(parsedOptions, fs) {
   const content = {};
-  if (!fileSys.exists(`${paths[0]}`, "utf8")) {
-    content.error = `head: ${paths[0]}: No such file or directory`;
-    errorStatus.isError = true;
+  const path = parsedOptions.filePaths[0];
+  if (!fs.existsSync(`${path}`, "utf8")) {
+    content.error = `head: ${path}: No such file or directory`;
+    parsedOptions.isError = true;
     return content;
   }
-  content.lines = fileSys.reader(`${paths[0]}`, "utf8");
+  content.lines = fs.readFileSync(`${path}`, "utf8");
   return content;
 };
 
 const parseOptions = function(userOptions) {
-  return { filePaths: userOptions, num: 10 };
+  return { filePaths: userOptions, num: 10, isError: false };
 };
 
-const performHeadOperation = function(userOptions) {
-  const fileSys = {
-    exists: fs.existsSync,
-    reader: fs.readFileSync
-  };
-  let errorStatus = { isError: false };
-  const parsedOptions = parseOptions(userOptions, errorStatus);
-  const lines = loadContents(fileSys, parsedOptions.filePaths, errorStatus);
-
-  const extractedLines = extractFirstNLines(
-    lines.lines,
-    parsedOptions.num,
-    errorStatus
-  );
-  const joinedLines = joinLines(extractedLines.lines, errorStatus);
-  return { output: joinedLines, error: lines.error };
+const performHeadOperation = function(userOptions, fs) {
+  const parsedOptions = parseOptions(userOptions);
+  const lines = loadContents(parsedOptions, fs);
+  const extractedLines = extractFirstNLines(lines.lines, parsedOptions);
+  return { output: extractedLines, error: lines.error };
 };
 
 module.exports = {
   parseOptions,
   loadContents,
   extractFirstNLines,
-  joinLines,
   performHeadOperation
 };
