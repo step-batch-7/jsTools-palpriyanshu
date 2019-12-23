@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const joinLines = function(lines, errorStatus) {
   if (errorStatus.isError) return "";
   return lines[0].join("\n");
@@ -25,9 +27,28 @@ const parseOptions = function(userOptions) {
   return { filePaths: userOptions, num: 10 };
 };
 
+const performHeadOperation = function(userOptions) {
+  const fileSys = {
+    exists: fs.existsSync,
+    reader: fs.readFileSync
+  };
+  let errorStatus = { isError: false };
+  const parsedOptions = parseOptions(userOptions, errorStatus);
+  const lines = loadContents(fileSys, parsedOptions.filePaths, errorStatus);
+
+  const extractedLines = extractFirstNLines(
+    lines.lines,
+    parsedOptions.num,
+    errorStatus
+  );
+  const joinedLines = joinLines(extractedLines.lines, errorStatus);
+  return { output: joinedLines, error: lines.error };
+};
+
 module.exports = {
   parseOptions,
   loadContents,
   extractFirstNLines,
-  joinLines
+  joinLines,
+  performHeadOperation
 };

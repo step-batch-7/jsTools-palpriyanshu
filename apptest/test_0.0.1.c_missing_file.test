@@ -1,3 +1,2 @@
 node head.js badFile.txt
-
 head: badFile.txt: No such file or directory
