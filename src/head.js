@@ -5,37 +5,36 @@ const generateErrorMsg = function(error) {
   stderr.write(`${error}\n`);
 };
 
-class Head {
-  constructor() {
-    this.num = 10;
-    this.filePaths = [];
-    this.error = "";
-  }
+const joinLines = function(lines, errorStatus) {
+  if (errorStatus.isError) return "";
+  return lines[0].join("\n");
+};
 
-  joinLines(lines) {
-    if (this.error !== "") return "";
-    return lines.lines[0].join("\n");
-  }
+const extractFirstNLines = function(lines, num, errorStatus) {
+  if (errorStatus.isError) return {};
+  const listOfLines = lines.split("\n");
+  const extractedLines = listOfLines.slice(0, num);
+  return { lines: [extractedLines] };
+};
 
-  extractFirstNLines(lines, path) {
-    const listOfLines = lines.split("\n");
-    const extractedLines = listOfLines.slice(0, this.num);
-    return { lines: [extractedLines], filePath: [path] };
+const loadLines = function(fileSys, paths, errorStatus, generateErrorMsg) {
+  if (!fileSys.exists(`${paths[0]}`, "utf8")) {
+    error = `head: ${paths[0]}: No such file or directory`;
+    errorStatus.isError = true;
+    return generateErrorMsg(error);
   }
+  const lines = fileSys.reader(`${paths[0]}`, "utf8");
+  return lines;
+};
 
-  loadLines(fileSys, path, generateErrorMsg) {
-    if (!fileSys.exists(`${path}`, "utf8")) {
-      this.error = `head: ${path}: No such file or directory`;
-      return generateErrorMsg(this.error);
-    }
-    const lines = fileSys.reader(`${path}`, "utf8");
-    return this.extractFirstNLines(lines, path);
-  }
+const parseOptions = function(userOptions) {
+  return { filePaths: userOptions, num: 10 };
+};
 
-  parseOptions(userOptions) {
-    this.filePaths = userOptions;
-    return { filePaths: this.filePaths, num: this.num };
-  }
-}
-
-module.exports = { Head, generateErrorMsg };
+module.exports = {
+  parseOptions,
+  loadLines,
+  extractFirstNLines,
+  joinLines,
+  generateErrorMsg
+};
