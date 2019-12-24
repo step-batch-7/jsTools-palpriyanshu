@@ -13,6 +13,11 @@ describe("parsedOptions", function() {
     assert.deepStrictEqual(parseOptions(["one.txt"]), expected);
   });
 
+  it("should parsed the userOptions when lines count and one file is given", function() {
+    const expected = { filePaths: ["one.txt"], num: 3, isError: false };
+    assert.deepStrictEqual(parseOptions(["-n", 3, "one.txt"]), expected);
+  });
+
   it("should parsed the userOptions when more than one file is given", function() {
     const userOptions = ["one.txt", "two.txt"];
     const expected = {
