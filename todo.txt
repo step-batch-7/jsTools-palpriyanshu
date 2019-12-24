@@ -43,7 +43,7 @@ node head.js -n 3 one.txt
   d.  head  n 2 one.txt  (error --no such file or directory)
 
 * appTest
-  2.a   node head.js -n 3 one.txt
+✔️  2.a   node head.js -n 3 one.txt
        1
        2
        3
