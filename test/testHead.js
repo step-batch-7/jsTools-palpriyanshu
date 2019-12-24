@@ -9,22 +9,18 @@ const {
 
 describe("parsedOptions", function() {
   it("should parsed the userOptions when only one file is given", function() {
-    const expected = { filePaths: ["one.txt"], num: 10, isError: false };
+    const expected = { filePaths: ["one.txt"], num: 10 };
     assert.deepStrictEqual(parseOptions(["one.txt"]), expected);
   });
 
   it("should parsed the userOptions when lines count and one file is given", function() {
-    const expected = { filePaths: ["one.txt"], num: 3, isError: false };
+    const expected = { filePaths: ["one.txt"], num: 3 };
     assert.deepStrictEqual(parseOptions(["-n", 3, "one.txt"]), expected);
   });
 
   it("should parsed the userOptions when more than one file is given", function() {
     const userOptions = ["one.txt", "two.txt"];
-    const expected = {
-      filePaths: ["one.txt", "two.txt"],
-      num: 10,
-      isError: false
-    };
+    const expected = { filePaths: ["one.txt", "two.txt"], num: 10 };
     assert.deepStrictEqual(parseOptions(userOptions), expected);
   });
 });
@@ -42,10 +38,7 @@ describe("loadContents", function() {
       }
     };
     const paths = { filePaths: ["path"] };
-    assert.deepStrictEqual(loadContents(paths, fs), {
-      lines: " ",
-      isError: false
-    });
+    assert.deepStrictEqual(loadContents(paths, fs), { lines: " " });
   });
 
   it("should not load the lines when file does not exists", function() {
@@ -57,22 +50,16 @@ describe("loadContents", function() {
     };
 
     const paths = { filePaths: ["path"] };
-    const expected = {
-      isError: true,
-      error: `head: path: No such file or directory`
-    };
+    const expected = { error: `head: path: No such file or directory` };
     assert.deepStrictEqual(loadContents(paths, fs), expected);
   });
 });
 
 describe("extractFirstNLines", function() {
   it("should extract the first N lines when Lines are more than given lines", function() {
-    const loadedLines = {
-      lines: `1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12`,
-      isError: false
-    };
+    const loadedLines = { lines: `1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12` };
     const expected = { lines: `1\n2\n3\n4\n5\n6\n7\n8\n9\n10` };
-    const parsedOptions = { filePaths: ["one.txt"], num: 10, isError: false };
+    const parsedOptions = { filePaths: ["one.txt"], num: 10 };
     assert.deepStrictEqual(
       extractFirstNLines(loadedLines, parsedOptions),
       expected
@@ -80,11 +67,8 @@ describe("extractFirstNLines", function() {
   });
 
   it("should give all lines when Lines in file are less than given lines", function() {
-    const loadedLines = {
-      lines: `1\n2\n3`,
-      isError: false
-    };
-    const parsedOptions = { filePaths: ["one.txt"], num: 10, isError: false };
+    const loadedLines = { lines: `1\n2\n3` };
+    const parsedOptions = { filePaths: ["one.txt"], num: 10 };
     assert.deepStrictEqual(extractFirstNLines(loadedLines, parsedOptions), {
       lines: `1\n2\n3`
     });
@@ -92,8 +76,8 @@ describe("extractFirstNLines", function() {
 
   it("should give error object when invalid count is present", function() {
     const lines = `1\n2\n3`;
-    const parsedOptions = { filePaths: ["one.txt"], num: 0, isError: false };
-    const expected = { isError: true, error: `head: illegal line count -- 0` };
+    const parsedOptions = { filePaths: ["one.txt"], num: 0 };
+    const expected = { error: `head: illegal line count -- 0` };
     assert.deepStrictEqual(extractFirstNLines(lines, parsedOptions), expected);
   });
 });
