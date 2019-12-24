@@ -1,7 +1,6 @@
 const fs = require("fs");
 
 const extractFirstNLines = function(loadedLines, parsedOptions) {
-  // if (loadedLines.isError) return "";
   if (parsedOptions.num < 1)
     return {
       isError: true,

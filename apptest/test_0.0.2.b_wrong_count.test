@@ -1,0 +1,2 @@
+node head.js -n 0 ./appTest/two.txt
+head: illegal line count -- 0

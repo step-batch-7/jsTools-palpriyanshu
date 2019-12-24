@@ -124,4 +124,13 @@ describe("performHeadOperation", function() {
     };
     assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
   });
+
+  it("should give error on error stream when wrong count is present", function() {
+    const userOptions = ["-n", 0, "./appTest/two.txt"];
+    const expected = {
+      error: `head: illegal line count -- 0`,
+      output: undefined
+    };
+    assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
+  });
 });
