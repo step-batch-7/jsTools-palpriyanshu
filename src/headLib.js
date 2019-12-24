@@ -18,11 +18,12 @@ const loadContents = function(parsedOptions, fs) {
 
 const parseOptions = function(userOptions) {
   if (userOptions[0] === `-n`) {
-    return {
-      filePaths: userOptions.slice(2),
-      num: userOptions[1],
-      isError: false
-    };
+    if (userOptions[1] >= 1)
+      return {
+        filePaths: userOptions.slice(2),
+        num: userOptions[1],
+        isError: false
+      };
   }
   return { filePaths: userOptions, num: 10, isError: false };
 };

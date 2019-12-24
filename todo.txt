@@ -37,7 +37,7 @@ v0.0.1
 ------------------------------------------------------------
 v0.0.2
 node head.js -n 3 one.txt
-  a.  head -n 3 one.txt  
+✔️  a.  head -n 3 one.txt  
   b.  head -n 0 one.txt  (error --illegal count)
   c.  head -p 8 one.txt  (error --illegal option)
   d.  head  n 2 one.txt  (error --no such file or directory)
@@ -51,7 +51,7 @@ node head.js -n 3 one.txt
   2.b   node head.js -n 0 one.txt
        head: illegal line count -- 0
 
-  2.c   node head.js -n 0 one.txt
+  2.c   node head.js -p 0 one.txt
        head: illegal option -- p
        usage: head [-n lines | -c bytes] [file ...]
 

@@ -1,0 +1,4 @@
+node head.js -n 3 ./appTest/one.txt
+1
+2
+3
