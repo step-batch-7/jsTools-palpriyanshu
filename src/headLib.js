@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 const extractFirstNLines = function(loadedLines, parsedOptions) {
   if (parsedOptions.num < 1)
     return { error: `head: illegal line count -- ${parsedOptions.num}` };
@@ -26,14 +24,14 @@ const parseOptions = function(userOptions) {
 
 const performHeadOperation = function(userOptions, fs) {
   const parsedOptions = parseOptions(userOptions);
-  if (parsedOptions.error) return { error: parsedOptions.error };
+  if (parsedOptions.error) return { error: parsedOptions.error, output: "" };
 
   const loadedLines = loadContents(parsedOptions, fs);
-  if (loadedLines.error) return { error: loadedLines.error };
+  if (loadedLines.error) return { error: loadedLines.error, output: "" };
 
   const extractedLines = extractFirstNLines(loadedLines, parsedOptions);
-
-  return { output: extractedLines.lines, error: extractedLines.error };
+  if (extractedLines.error) return { error: extractedLines.error, output: "" };
+  return { error: "", output: extractedLines.lines };
 };
 
 module.exports = {

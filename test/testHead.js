@@ -1,5 +1,5 @@
-const fs = require("fs");
 const assert = require("assert");
+
 const {
   parseOptions,
   loadContents,
@@ -34,11 +34,11 @@ describe("loadContents", function() {
       },
       readFileSync: function(path) {
         assert.equal(path, "path");
-        return " ";
+        return "1";
       }
     };
     const paths = { filePaths: ["path"] };
-    assert.deepStrictEqual(loadContents(paths, fs), { lines: " " });
+    assert.deepStrictEqual(loadContents(paths, fs), { lines: "1" });
   });
 
   it("should not load the lines when file does not exists", function() {
@@ -84,36 +84,77 @@ describe("extractFirstNLines", function() {
 
 describe("performHeadOperation", function() {
   it("should give 10 lines for default case when all args are correct", function() {
-    const userOptions = ["./appTest/one.txt"];
+    const userOptions = ["path"];
+    const fs = {
+      existsSync: function(path) {
+        assert.equal(path, "path");
+        return true;
+      },
+      readFileSync: function(path) {
+        assert.equal(path, "path");
+        return `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`;
+      }
+    };
     const expected = {
       output: `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`,
-      error: undefined
+      error: ""
     };
     assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
   });
 
   it("should give all lines for default case when all args are correct and file have less than 10 lines", function() {
-    const userOptions = ["./appTest/two.txt"];
+    const userOptions = ["path"];
+    const fs = {
+      existsSync: function(path) {
+        assert.equal(path, "path");
+        return true;
+      },
+      readFileSync: function(path) {
+        assert.equal(path, "path");
+        return `1\n2\n3`;
+      }
+    };
     const expected = {
       output: `1\n2\n3`,
-      error: undefined
+      error: ""
     };
     assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
   });
 
   it("should give error on error stream when wrong file is present", function() {
-    const userOptions = ["badFile.txt"];
+    const userOptions = ["path"];
+    const fs = {
+      existsSync: function(path) {
+        assert.equal(path, "path");
+        return false;
+      },
+      readFileSync: function(path) {
+        assert.equal(path, "path");
+        return `1\n2\n3`;
+      }
+    };
     const expected = {
-      error: `head: badFile.txt: No such file or directory`
+      error: `head: path: No such file or directory`,
+      output: ""
     };
     assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
   });
 
   it("should give error on error stream when wrong count is present", function() {
-    const userOptions = ["-n", 0, "./appTest/two.txt"];
+    const userOptions = ["-n", 0, "path"];
+    const fs = {
+      existsSync: function(path) {
+        assert.equal(path, "path");
+        return true;
+      },
+      readFileSync: function(path) {
+        assert.equal(path, "path");
+        return `1\n2\n3`;
+      }
+    };
     const expected = {
       error: `head: illegal line count -- 0`,
-      output: undefined
+      output: ""
     };
     assert.deepStrictEqual(performHeadOperation(userOptions, fs), expected);
   });
