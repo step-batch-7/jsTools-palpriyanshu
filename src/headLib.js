@@ -1,16 +1,23 @@
-const extractFirstNLines = function(loadedLines, parsedOptions) {
-  if (parsedOptions.num < 1)
-    return { error: `head: illegal line count -- ${parsedOptions.num}` };
-  const listOfLines = loadedLines.lines.split("\n");
-  const extractedLines = listOfLines.slice(0, parsedOptions.num).join("\n");
-  return { lines: extractedLines };
+const loadFirst10Lines = function(parsedOptions, readFile, print) {
+  const path = parsedOptions.filePaths[0];
+  readFile(path, "utf8", (err, content) => {
+    if (err) {
+      return print("", `head: ${path}: No such file or directory`);
+    }
+    const extractedLines = extractFirstNLines(parsedOptions, content);
+    print(extractedLines.output, extractedLines.error);
+  });
 };
 
-const loadContents = function(parsedOptions, fs) {
-  const path = parsedOptions.filePaths[0];
-  if (!fs.existsSync(`${path}`))
-    return { error: `head: ${path}: No such file or directory` };
-  return { lines: fs.readFileSync(`${path}`, "utf8") };
+const extractFirstNLines = function(parsedOptions, contents) {
+  if (parsedOptions.num < 1)
+    return {
+      output: "",
+      error: `head: illegal line count -- ${parsedOptions.num}`
+    };
+  const listOfLines = contents.split("\n");
+  const extractedLines = listOfLines.slice(0, parsedOptions.num).join("\n");
+  return { output: extractedLines, error: "" };
 };
 
 const parseOptions = function(userOptions) {
@@ -22,21 +29,16 @@ const parseOptions = function(userOptions) {
   return { filePaths: userOptions, num: 10 };
 };
 
-const performHeadOperation = function(userOptions, fs) {
+const head = function(userOptions, readFile, print) {
   const parsedOptions = parseOptions(userOptions);
-  if (parsedOptions.error) return { error: parsedOptions.error, output: "" };
+  if (parsedOptions.error) return print("", parsedOptions.error);
 
-  const loadedLines = loadContents(parsedOptions, fs);
-  if (loadedLines.error) return { error: loadedLines.error, output: "" };
-
-  const extractedLines = extractFirstNLines(loadedLines, parsedOptions);
-  if (extractedLines.error) return { error: extractedLines.error, output: "" };
-  return { error: "", output: extractedLines.lines };
+  loadFirst10Lines(parsedOptions, readFile, print);
 };
 
 module.exports = {
   parseOptions,
-  loadContents,
+  loadFirst10Lines,
   extractFirstNLines,
-  performHeadOperation
+  head
 };

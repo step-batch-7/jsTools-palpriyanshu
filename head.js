@@ -1,11 +1,14 @@
 const fs = require("fs");
-const { performHeadOperation } = require("./src/headLib.js");
+const { head } = require("./src/headLib.js");
+
+const print = function(output, error) {
+  process.stdout.write(output);
+  process.stderr.write(error);
+};
 
 const main = function() {
   const userOptions = process.argv.slice(2);
-  const result = performHeadOperation(userOptions, fs);
-  process.stdout.write(result.output);
-  process.stderr.write(result.error);
+  head(userOptions, fs.readFile, print);
 };
 
 main();
