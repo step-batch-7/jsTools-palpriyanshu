@@ -5,7 +5,7 @@ const main = function() {
   const userOptions = process.argv.slice(2);
   const result = performHeadOperation(userOptions, fs);
   process.stdout.write(result.output);
-  process.stdout.write(result.error);
+  process.stderr.write(result.error);
 };
 
 main();
