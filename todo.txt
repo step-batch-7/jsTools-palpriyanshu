@@ -36,6 +36,36 @@ v0.0.1
 ✔️ --> generateErrorMsg
 ------------------------------------------------------------
 v0.0.2
+    2.a. node head.js  (missing file)
+✔️    2.b. cat one.txt | node head.js  (correct file)
+✔️    2.c. cat badFile.txt | node head.js  (wrong file)
+
+* appTest
+      2.a  node head.js
+
+✔️     2.b. cat one.txt | node head.js
+       1
+       2
+       3
+       4
+       5
+       6
+       7
+       8
+       9
+       10
+
+✔️     2.c. cat badFile.txt | node head.js        (handled in 2.a)
+       cat: badFile.txt: No such file or directory
+
+task 
+  1.appTest for node head.js
+  2.test stdin
+  3.send stdin function from main
+  4.merge stdin function in loadContents function
+  5.test callBack
+------------------------------------------------------------
+v0.0.3
 node head.js -n 3 one.txt
 ✔️  a.  head -n 3 one.txt  
 ✔️  b.  head -n 0 one.txt  (error --illegal count)
@@ -59,21 +89,3 @@ node head.js -n 3 one.txt
        head: badFile.txt: No such file or directory  (handled in 1.c)
 
 -----------------------------------------------------------------------
-v0.0.3
-     a. cat one.txt | node head.js  (correct file)
-     b. cat badFile.txt | node head.js  (missing file)
-
-* appTest
-     a. cat one.txt | node head.js
-       1
-       2
-       3
-       4
-       5
-       6
-       7
-       8
-       9
-       10
-
-     b. cat badFile.txt | node head.js

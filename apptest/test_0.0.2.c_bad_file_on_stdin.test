@@ -1,0 +1,2 @@
+cat badFile.txt | node head.js
+cat: badFile.txt: No such file or directory
