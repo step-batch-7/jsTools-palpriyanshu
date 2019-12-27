@@ -11,14 +11,19 @@ const extractFirstNLines = function(parsedOptions, contents) {
 
 const onLoading = function(write, err, content) {
   if (err) {
-    return write("", `head: ${this.filePaths[0]}: No such file or directory`);
+    write("", `head: ${this.filePaths[0]}: No such file or directory`);
+    return;
   }
   const extractedLines = extractFirstNLines(this, content);
   write(extractedLines.output, extractedLines.error);
 };
 
-const loadFirst10Lines = function(parsedOptions, readFile, write) {
+const loadFirst10Lines = function(parsedOptions, readFile, write, read) {
   const path = parsedOptions.filePaths[0];
+  if (!path) {
+    read(onLoading.bind(parsedOptions, write, ""));
+    return;
+  }
   readFile(path, "utf8", onLoading.bind(parsedOptions, write));
 };
 
@@ -31,11 +36,11 @@ const parseOptions = function(userOptions) {
   return { filePaths: userOptions, num: 10 };
 };
 
-const head = function(userOptions, readFile, write) {
+const head = function(userOptions, readFile, write, read) {
   const parsedOptions = parseOptions(userOptions);
   if (parsedOptions.error) return write("", parsedOptions.error);
 
-  loadFirst10Lines(parsedOptions, readFile, write);
+  loadFirst10Lines(parsedOptions, readFile, write, read);
 };
 
 module.exports = {

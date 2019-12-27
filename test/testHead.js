@@ -42,6 +42,24 @@ describe("loadFirstNLines", function() {
     loadFirst10Lines(paths, readFile, write);
   });
 
+  it("should load the lines from stdin when file is not given", function() {
+    const write = function(output, error) {
+      assert.strictEqual(output, `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`);
+      assert.strictEqual(error, ``);
+    };
+
+    const read = function(onLoading) {
+      onLoading.bind(parsedOptions, write, "", `1\n2\n3\n4\n5\n6\n7\n8\n9\n10`);
+    };
+
+    const readFile = function() {
+      return;
+    };
+
+    const parsedOptions = { filePaths: [""], num: 10 };
+    loadFirst10Lines(parsedOptions, readFile, write, read);
+  });
+
   it("should not load the lines when file does not exists", function() {
     const readFile = function(path, encoder, onLoading) {
       assert.equal(path, "path");

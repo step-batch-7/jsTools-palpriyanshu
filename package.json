@@ -1,0 +1,23 @@
+{
+  "name": "jstools-palpriyanshu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "head.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/step-batch-7/jsTools-palpriyanshu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/step-batch-7/jsTools-palpriyanshu/issues"
+  },
+  "homepage": "https://github.com/step-batch-7/jsTools-palpriyanshu#readme"
+}
