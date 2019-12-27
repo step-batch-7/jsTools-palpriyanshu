@@ -1,14 +1,3 @@
-const loadFirst10Lines = function(parsedOptions, readFile, print) {
-  const path = parsedOptions.filePaths[0];
-  readFile(path, "utf8", (err, content) => {
-    if (err) {
-      return print("", `head: ${path}: No such file or directory`);
-    }
-    const extractedLines = extractFirstNLines(parsedOptions, content);
-    print(extractedLines.output, extractedLines.error);
-  });
-};
-
 const extractFirstNLines = function(parsedOptions, contents) {
   if (parsedOptions.num < 1)
     return {
@@ -20,8 +9,21 @@ const extractFirstNLines = function(parsedOptions, contents) {
   return { output: extractedLines, error: "" };
 };
 
+const onLoading = function(write, err, content) {
+  if (err) {
+    return write("", `head: ${this.filePaths[0]}: No such file or directory`);
+  }
+  const extractedLines = extractFirstNLines(this, content);
+  write(extractedLines.output, extractedLines.error);
+};
+
+const loadFirst10Lines = function(parsedOptions, readFile, write) {
+  const path = parsedOptions.filePaths[0];
+  readFile(path, "utf8", onLoading.bind(parsedOptions, write));
+};
+
 const parseOptions = function(userOptions) {
-  if (userOptions[0] === `-n`)
+  if (userOptions[0] == "-n")
     return {
       filePaths: userOptions.slice(2),
       num: userOptions[1]
@@ -29,11 +31,11 @@ const parseOptions = function(userOptions) {
   return { filePaths: userOptions, num: 10 };
 };
 
-const head = function(userOptions, readFile, print) {
+const head = function(userOptions, readFile, write) {
   const parsedOptions = parseOptions(userOptions);
-  if (parsedOptions.error) return print("", parsedOptions.error);
+  if (parsedOptions.error) return write("", parsedOptions.error);
 
-  loadFirst10Lines(parsedOptions, readFile, print);
+  loadFirst10Lines(parsedOptions, readFile, write);
 };
 
 module.exports = {

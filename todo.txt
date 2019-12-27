@@ -48,17 +48,32 @@ node head.js -n 3 one.txt
        2
        3
 
-✔️  2.b   node head.js -n 0 one.txt
+==>pending<==  2.b   node head.js -n 0 one.txt
        head: illegal line count -- 0
 
-  2.c   node head.js -p 0 one.txt
+==>pending<==  2.c   node head.js -p 0 one.txt
        head: illegal option -- p
        usage: head [-n lines | -c bytes] [file ...]
 
-  2.d   node head.js n 2 one.txt
-       head: n: No such file or directory
-       head: 2: No such file or directory
-       head: one.txt: No such file or directory
-
-  2.e  node head.js -n 3 badFile.txt
+✔️  2.d  node head.js -n 3 badFile.txt
        head: badFile.txt: No such file or directory  (handled in 1.c)
+
+-----------------------------------------------------------------------
+v0.0.3
+     a. cat one.txt | node head.js  (correct file)
+     b. cat badFile.txt | node head.js  (missing file)
+
+* appTest
+     a. cat one.txt | node head.js
+       1
+       2
+       3
+       4
+       5
+       6
+       7
+       8
+       9
+       10
+
+     b. cat badFile.txt | node head.js
