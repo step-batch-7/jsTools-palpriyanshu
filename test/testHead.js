@@ -102,16 +102,6 @@ describe('extractFirstNLines', function() {
       error: ''
     });
   });
-
-  it('should give error object when invalid count is present', function() {
-    const contents = '1\n2\n3';
-    const parsedOptions = { filePaths: ['path'], num: 0 };
-    const expected = { error: 'head: illegal line count -- 0', output: '' };
-    assert.deepStrictEqual(
-      extractFirstNLines(parsedOptions, contents),
-      expected
-    );
-  });
 });
 
 describe('head', function() {

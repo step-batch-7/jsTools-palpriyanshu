@@ -1,11 +1,4 @@
 const extractFirstNLines = function(parsedOptions, contents) {
-  const minLineCount = 1;
-  if (parsedOptions.num < minLineCount) {
-    return {
-      output: '',
-      error: `head: illegal line count -- ${parsedOptions.num}`
-    };
-  }
   const firstIndex = 0;
   const listOfLines = contents.split('\n');
   const extractedLines = listOfLines
@@ -66,11 +59,16 @@ const loadFirst10Lines = function(parsedOptions, readerWriter) {
   );
 };
 
+const isValidLineCount = function(parsedOptions) {
+  const minLineCount = 1;
+  return parsedOptions.num < minLineCount;
+};
+
 const parseOptions = function(userOptions) {
   let index = 0;
   if (userOptions[index] === '-n') {
     const [, , ...paths] = userOptions;
-    return { filePaths: paths, num: userOptions[++index] };
+    return { filePaths: paths, num: +userOptions[++index] };
   }
   return { filePaths: userOptions, num: 10 };
 };
@@ -81,7 +79,10 @@ const head = function(userOptions, readerWriter) {
     readerWriter.write('', parsedOptions.error);
     return;
   }
-
+  if (isValidLineCount(parsedOptions)) {
+    readerWriter.write('', `head: illegal line count -- ${parsedOptions.num}`);
+    return;
+  }
   loadFirst10Lines(parsedOptions, readerWriter);
 };
 
