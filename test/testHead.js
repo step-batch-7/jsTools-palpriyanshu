@@ -17,11 +17,14 @@ describe('parsedOptions', function() {
 
   it('should parsed the userOptions when lines is specified', function() {
     const expected = { filePaths: ['one.txt'], num: 3 };
-    const lineCount = 3;
-    assert.deepStrictEqual(
-      parseOptions(['-n', lineCount, 'one.txt']),
-      expected
-    );
+    const count = 3;
+    assert.deepStrictEqual(parseOptions(['-n', count, 'one.txt']), expected);
+  });
+
+  it('should parsed the userOptions when no file & line is given', function() {
+    const userOptions = [''];
+    const expected = { filePaths: [''], num: 10 };
+    assert.deepStrictEqual(parseOptions(userOptions), expected);
   });
 
   it('should parsed the userOptions when multiple files are given', function() {
@@ -33,61 +36,50 @@ describe('parsedOptions', function() {
 
 describe('loadFirstNLines', function() {
   it('should load the lines when file exists', function() {
-    const readFile = function(path, encoder, onLoading) {
+    const readerWriter = {};
+
+    readerWriter.readFile = function(path, encoder, onLoading) {
       assert.strictEqual(path, 'path');
       assert.strictEqual(encoder, 'utf8');
       onLoading(null, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
     };
 
-    const write = sinon.stub();
-    write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
 
-    const stdin = new EventEmitter();
-    stdin.pause = sinon.spy();
-
-    const paths = { filePaths: ['path'] };
-    loadFirst10Lines(paths, readFile, write, stdin);
-  });
-
-  it('should load the lines from stdin when file is not given', function() {
-    const write = sinon.stub();
-    write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
-
-    const stdin = new EventEmitter();
-    stdin.pause = sinon.spy();
-    stdin.setEncoding = sinon.spy();
-    stdin.emit('data', '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
-
-    const readFile = sinon.spy();
-
-    const parsedOptions = { filePaths: [''], num: 10 };
-    loadFirst10Lines(parsedOptions, readFile, write, stdin);
-  });
-
-  it('should wait when content is not present at stdin', function() {
-    const write = sinon.stub();
-    write.withArgs('1\n2\n', '');
-
-    const stdin = new EventEmitter();
-    stdin.setEncoding = sinon.spy();
-
-    const parsedOptions = { filePaths: [''], num: 2 };
-    stdin.emit('data', '1\n2\n');
-    loadFirst10Lines(parsedOptions, '', write, stdin);
+    const parsedOptions = { filePaths: ['path'], num: 10 };
+    loadFirst10Lines(parsedOptions, readerWriter);
   });
 
   it('should not load the lines when file does not exists', function() {
-    const readFile = function(path, encoder, onLoading) {
-      assert.equal(path, 'path');
+    const readerWriter = {};
+
+    readerWriter.readFile = function(path, encoder, onLoading) {
+      assert.strictEqual(path, 'path');
       assert.strictEqual(encoder, 'utf8');
       onLoading('head: path: No such file or directory', null);
     };
 
-    const write = sinon.stub();
-    write.withArgs('', 'head: path: No such file or directory');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('', 'head: path: No such file or directory');
 
     const paths = { filePaths: ['path'] };
-    loadFirst10Lines(paths, readFile, write);
+    loadFirst10Lines(paths, readerWriter);
+  });
+
+  it('should load the lines from stdin when file is not given', function() {
+    const readerWriter = {};
+
+    readerWriter.stdin = new EventEmitter();
+    readerWriter.stdin.setEncoding = sinon.spy();
+    readerWriter.stdin.emit('data', '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
+    readerWriter.stdin.emit('end');
+
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
+
+    const parsedOptions = { filePaths: [''], num: 10 };
+    loadFirst10Lines(parsedOptions, readerWriter);
   });
 });
 
@@ -126,68 +118,64 @@ describe('head', function() {
   it('should give 10 lines of file for default case ', function() {
     const userOptions = ['path'];
 
-    const readFile = function(path, encoder, onLoading) {
+    const readerWriter = {};
+    readerWriter.readFile = function(path, encoder, onLoading) {
       assert.equal(path, 'path');
       assert.equal(encoder, 'utf8');
       onLoading(null, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
     };
 
-    const write = sinon.stub();
-    write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('1\n2\n3\n4\n5\n6\n7\n8\n9\n10', '');
 
-    const stdin = {};
-
-    head(userOptions, readFile, write, stdin);
+    head(userOptions, readerWriter);
   });
 
-  it('should give all lines when file has less than given lines', function() {
+  it('should give all lines when file has less than 10 lines', function() {
     const userOptions = ['path'];
 
-    const readFile = function(path, encoder, onLoading) {
+    const readerWriter = {};
+    readerWriter.readFile = function(path, encoder, onLoading) {
       assert.equal(path, 'path');
       assert.equal(encoder, 'utf8');
       onLoading(null, '1\n2\n3');
     };
 
-    const write = sinon.stub();
-    write.withArgs('1\n2\n3', '');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('1\n2\n3', '');
 
-    const stdin = {};
-
-    head(userOptions, readFile, write, stdin);
+    head(userOptions, readerWriter);
   });
 
   it('should give error when wrong file is present', function() {
-    const userOptions = ['path'];
+    const userOptions = ['badPath'];
 
-    const readFile = function(path, encoder, onLoading) {
-      assert.equal(path, 'path');
+    const readerWriter = {};
+    readerWriter.readFile = function(path, encoder, onLoading) {
+      assert.equal(path, 'badPath');
       assert.equal(encoder, 'utf8');
-      onLoading('head: path: No such file or directory', null);
+      onLoading('head: badPath: No such file or directory', null);
     };
 
-    const write = sinon.stub();
-    write.withArgs('', 'head: path: No such file or directory');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('', 'head: path: No such file or directory');
 
-    const stdin = {};
-
-    head(userOptions, readFile, write, stdin);
+    head(userOptions, readerWriter);
   });
 
   it('should give error when wrong count is present', function() {
     const userOptions = ['-n', '0', 'path'];
 
-    const readFile = function(path, encoder, callBack) {
+    const readerWriter = {};
+    readerWriter.readFile = function(path, encoder, onLoading) {
       assert.equal(path, 'path');
       assert.equal(encoder, 'utf8');
-      callBack(null, '1\n2\n3');
+      onLoading('head: illegal line count --0', null);
     };
 
-    const write = sinon.stub();
-    write.withArgs('', 'head: illegal line count --0');
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('', 'head: illegal line count --0');
 
-    const stdin = {};
-
-    head(userOptions, readFile, write, stdin);
+    head(userOptions, readerWriter);
   });
 });

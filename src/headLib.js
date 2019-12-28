@@ -6,8 +6,8 @@ const extractFirstNLines = function(parsedOptions, contents) {
       error: `head: illegal line count -- ${parsedOptions.num}`
     };
   }
-  const listOfLines = contents.split('\n');
   const firstIndex = 0;
+  const listOfLines = contents.split('\n');
   const extractedLines = listOfLines
     .slice(firstIndex, parsedOptions.num)
     .join('\n');
@@ -20,61 +20,69 @@ const isNthNewLine = function(content, count) {
   return content.slice(lastIndex) === '\n' && count.num !== minCount;
 };
 
-const onLoading = function(write, err, content) {
+const onLoading = function(readerWriter, err, content) {
   const index = 0;
   if (err) {
-    write('', `head: ${this.filePaths[index]}: No such file or directory`);
+    readerWriter.write(
+      '',
+      `head: ${this.filePaths[index]}: No such file or directory`
+    );
     return;
   }
   const extractedLines = extractFirstNLines(this, content);
-  write(extractedLines.output, extractedLines.error);
+  readerWriter.write(extractedLines.output, extractedLines.error);
 };
 
-const onLoadFromStdin = function(write, count, stdin, content) {
+const onLoadFromStdin = function(readerWriter, count, content) {
   const extractedLines = extractFirstNLines(this, content);
-  write(extractedLines.output, extractedLines.error);
+  readerWriter.write(extractedLines.output, extractedLines.error);
   if (isNthNewLine(content, count)) {
     --count.num;
     return;
   }
-  stdin.pause();
+  readerWriter.stdin.emit('end');
 };
 
-const loadLinesFromStdin = function(parsedOptions, write, stdin) {
+const loadLinesFromStdin = function(parsedOptions, readerWriter) {
   const count = { num: parsedOptions.num };
-  stdin.setEncoding('utf8');
-  stdin.on('data', onLoadFromStdin.bind(parsedOptions, write, count, stdin));
+  readerWriter.stdin.setEncoding('utf8');
+  readerWriter.stdin.on(
+    'data',
+    onLoadFromStdin.bind(parsedOptions, readerWriter, count)
+  );
 };
 
-const loadFirst10Lines = function(parsedOptions, readFile, write, stdin) {
+const loadFirst10Lines = function(parsedOptions, readerWriter) {
   const index = 0;
   const path = parsedOptions.filePaths[index];
   if (!path) {
-    loadLinesFromStdin(parsedOptions, write, stdin);
+    loadLinesFromStdin(parsedOptions, readerWriter);
     return;
   }
-  readFile(path, 'utf8', onLoading.bind(parsedOptions, write));
+  readerWriter.readFile(
+    path,
+    'utf8',
+    onLoading.bind(parsedOptions, readerWriter)
+  );
 };
 
 const parseOptions = function(userOptions) {
   let index = 0;
-  const unwantedArgsCount = 2;
   if (userOptions[index] === '-n') {
-    return {
-      filePaths: userOptions.slice(unwantedArgsCount),
-      num: userOptions[++index]
-    };
+    const [, , ...paths] = userOptions;
+    return { filePaths: paths, num: userOptions[++index] };
   }
   return { filePaths: userOptions, num: 10 };
 };
 
-const head = function(userOptions, readFile, write, stdin) {
+const head = function(userOptions, readerWriter) {
   const parsedOptions = parseOptions(userOptions);
   if (parsedOptions.error) {
-    return write('', parsedOptions.error);
+    readerWriter.write('', parsedOptions.error);
+    return;
   }
 
-  loadFirst10Lines(parsedOptions, readFile, write, stdin);
+  loadFirst10Lines(parsedOptions, readerWriter);
 };
 
 module.exports = {
