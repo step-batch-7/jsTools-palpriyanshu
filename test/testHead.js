@@ -153,7 +153,7 @@ describe('head', function() {
     head(userOptions, readerWriter);
   });
 
-  it('should give error when wrong count is present', function() {
+  it('should give error when line count is less than 1', function() {
     const userOptions = ['-n', '0', 'path'];
 
     const readerWriter = {};
@@ -165,6 +165,22 @@ describe('head', function() {
 
     readerWriter.write = sinon.stub();
     readerWriter.write.withArgs('', 'head: illegal line count --0');
+
+    head(userOptions, readerWriter);
+  });
+
+  it('should give error when line count is not integer', function() {
+    const userOptions = ['-n', 'm', 'path'];
+
+    const readerWriter = {};
+    readerWriter.readFile = function(path, encoder, onLoading) {
+      assert.equal(path, 'path');
+      assert.equal(encoder, 'utf8');
+      onLoading('head: illegal line count --m', null);
+    };
+
+    readerWriter.write = sinon.stub();
+    readerWriter.write.withArgs('', 'head: illegal line count --m');
 
     head(userOptions, readerWriter);
   });

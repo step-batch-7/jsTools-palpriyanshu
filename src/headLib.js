@@ -61,14 +61,16 @@ const loadFirst10Lines = function(parsedOptions, readerWriter) {
 
 const isValidLineCount = function(parsedOptions) {
   const minLineCount = 1;
-  return parsedOptions.num < minLineCount;
+  return (
+    +parsedOptions.num > minLineCount && Number.isInteger(+parsedOptions.num)
+  );
 };
 
 const parseOptions = function(userOptions) {
   let index = 0;
   if (userOptions[index] === '-n') {
     const [, , ...paths] = userOptions;
-    return { filePaths: paths, num: +userOptions[++index] };
+    return { filePaths: paths, num: userOptions[++index] };
   }
   return { filePaths: userOptions, num: 10 };
 };
@@ -79,7 +81,7 @@ const head = function(userOptions, readerWriter) {
     readerWriter.write('', parsedOptions.error);
     return;
   }
-  if (isValidLineCount(parsedOptions)) {
+  if (!isValidLineCount(parsedOptions)) {
     readerWriter.write('', `head: illegal line count -- ${parsedOptions.num}`);
     return;
   }
