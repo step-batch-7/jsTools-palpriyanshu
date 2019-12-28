@@ -36,7 +36,7 @@ v0.0.1
 ✔️ --> generateErrorMsg
 ------------------------------------------------------------
 v0.0.2
-    2.a. node head.js  (missing file)
+✔️    2.a. node head.js  (missing file)
 ✔️    2.b. cat one.txt | node head.js  (correct file)
 ✔️    2.c. cat badFile.txt | node head.js  (wrong file)
 
@@ -60,8 +60,8 @@ v0.0.2
 
 task 
   1.appTest for node head.js
-  2.test stdin
-  3.send stdin function from main
+✔️  2.test stdin
+✔️  3.send stdin object from main
   4.merge stdin function in loadContents function
   5.test callBack
 ------------------------------------------------------------
