@@ -59,11 +59,11 @@ v0.0.2
        cat: badFile.txt: No such file or directory
 
 task 
-  1.appTest for node head.js
+==> pending <==  1.appTest for node head.js
 ✔️  2.test stdin
 ✔️  3.send stdin object from main
-  4.merge stdin function in loadContents function
-  5.test callBack
+✔️  4.merge stdin function in loadContents function
+✔️  5.test callBack
 ------------------------------------------------------------
 v0.0.3
 node head.js -n 3 one.txt
@@ -78,10 +78,10 @@ node head.js -n 3 one.txt
        2
        3
 
-==>pending<==  2.b   node head.js -n 0 one.txt
+✔️ 2.b   node head.js -n 0 one.txt
        head: illegal line count -- 0
 
-==>pending<==  2.c   node head.js -p 0 one.txt
+✔️  2.c   node head.js -p 0 one.txt
        head: illegal option -- p
        usage: head [-n lines | -c bytes] [file ...]
 
