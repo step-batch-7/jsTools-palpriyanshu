@@ -12,7 +12,6 @@ describe('streamPicker', function () {
   });
 
   it('should createReadStream when file path is given', function () {
-    
     createReadStream.withArgs('myFile').returns(myFileStream);
     assert.strictEqual(streamPicker.pick('myFile'), myFileStream);
   });

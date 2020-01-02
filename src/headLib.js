@@ -26,13 +26,6 @@ const loadContents = function (stream, lineCount, afterLoading) {
   stream.on('end', () => afterLoading(content));
 };
 
-const getReadStream = function (fileName, reader) {
-  if (fileName) {
-    return reader.createReadStream(fileName);
-  }
-  return reader.stdin;
-};
-
 const isValidLineCount = function (count) {
   const minLineCount = 1;
   return (
@@ -49,7 +42,7 @@ const parseOptions = function (userOptions) {
   return { fileName: userOptions.join(''), num: 10 };
 };
 
-const head = function (userOptions, reader, displayResult) {
+const head = function (userOptions, streamPicker, displayResult) {
   const headOptions = parseOptions(userOptions);
 
   if (!isValidLineCount(headOptions.num)) {
@@ -58,7 +51,7 @@ const head = function (userOptions, reader, displayResult) {
     return;
   }
 
-  const readStream = getReadStream(headOptions.fileName, reader);
+  const readStream = streamPicker.pick(headOptions.fileName);
 
   const afterLoading = (content) => {
     const headLines = extractFirstNLines(content.lines, headOptions.num);
@@ -71,7 +64,6 @@ const head = function (userOptions, reader, displayResult) {
 module.exports = {
   parseOptions,
   isValidLineCount,
-  getReadStream,
   loadContents,
   extractFirstNLines,
   head

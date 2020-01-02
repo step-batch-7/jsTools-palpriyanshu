@@ -4,7 +4,6 @@ const { fake } = require('sinon');
 const {
   parseOptions,
   isValidLineCount,
-  getReadStream,
   loadContents,
   extractFirstNLines,
   head
@@ -42,22 +41,6 @@ describe('isValidLineCount', function () {
 
   it('should invalidate when line count is not a integer ', function () {
     assert.notOk(isValidLineCount('y'));
-  });
-});
-
-describe('getReadStream', function () {
-  let reader;
-  beforeEach(() => {
-    reader = { stdin: {}, createReadStream: function () { } };
-  });
-
-  it('should createReadStream when file path is given', function () {
-    const stream = reader.createReadStream('one.txt');
-    assert.strictEqual(getReadStream('one.txt', reader), stream);
-  });
-
-  it('should give stdin when file path is not given', function () {
-    assert.strictEqual(getReadStream('', reader), reader.stdin);
   });
 });
 
@@ -173,27 +156,27 @@ describe('extractFirstNLines', function () {
 describe('head', function () {
 
   context('when file is given', function () {
-    let stream;
+    let stream, streamPicker;
     beforeEach(function () {
       stream = { setEncoding: fake(), on: fake(), destroy: fake() };
+      streamPicker = {};
     });
 
     it('should give 10 lines of file for default case ', function (done) {
       const userOptions = ['one.txt'];
 
-      const createReadStream = function (fileName) {
-        assert.strictEqual(fileName, 'one.txt');
+      streamPicker.pick = function(filePath){
+        assert.strictEqual(filePath, 'one.txt');
         return stream;
       };
 
-      const reader = { createReadStream, stdin: {} };
       const displayResult = (result) => {
         assert.strictEqual(result.output, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
         assert.strictEqual(result.error, '');
         done();
       };
-
-      head(userOptions, reader, displayResult);
+      
+      head(userOptions, streamPicker, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
@@ -204,19 +187,18 @@ describe('head', function () {
     it('should give all lines when file has lines < 10', function (done) {
       const userOptions = ['one.txt'];
 
-      const createReadStream = function (fileName) {
-        assert.strictEqual(fileName, 'one.txt');
+      streamPicker.pick = function (filePath) {
+        assert.strictEqual(filePath, 'one.txt');
         return stream;
       };
 
-      const reader = { createReadStream, stdin: {} };
       const displayResult = (result) => {
         assert.strictEqual(result.output, 'abc');
         assert.strictEqual(result.error, '');
         done();
       };
 
-      head(userOptions, reader, displayResult);
+      head(userOptions, streamPicker, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
@@ -227,12 +209,11 @@ describe('head', function () {
     it('should give error when wrong file is present', function (done) {
       const userOptions = ['badFile.txt'];
 
-      const createReadStream = function (fileName) {
-        assert.strictEqual(fileName, 'badFile.txt');
+      streamPicker.pick = function (filePath) {
+        assert.strictEqual(filePath, 'badFile.txt');
         return stream;
       };
 
-      const reader = { createReadStream, stdin: {} };
       const err = { path: 'badFile.txt' };
       const errMsg = `head: ${err.path}: No such file or directory`;
       const displayResult = (result) => {
@@ -241,7 +222,7 @@ describe('head', function () {
         done();
       };
 
-      head(userOptions, reader, displayResult);
+      head(userOptions, streamPicker, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -251,12 +232,11 @@ describe('head', function () {
       const count = 0;
       const userOptions = ['-n', count, 'one.txt'];
 
-      const createReadStream = function (fileName) {
-        assert.strictEqual(fileName, 'badFile.txt');
+      streamPicker.pick = function (filePath) {
+        assert.strictEqual(filePath, 'one.txt');
         return stream;
       };
 
-      const reader = { createReadStream, stdin: {} };
       const err = { path: 'one.txt' };
       const displayResult = (result) => {
         assert.strictEqual(result.output, '');
@@ -264,7 +244,7 @@ describe('head', function () {
         done();
       };
 
-      head(userOptions, reader, displayResult);
+      head(userOptions, streamPicker, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -301,15 +281,20 @@ describe('head', function () {
 
     it('should load the 10 lines from stdin for default case', function (done) {
       const userOptions = [''];
+      const streamPicker = {};
 
-      const reader = { createReadStream: function () { }, stdin };
+      streamPicker.pick = function (filePath) {
+        assert.strictEqual(filePath, '');
+        return stdin;
+      };
+
       const displayResult = (result) => {
         assert.strictEqual(result.output, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
         assert.strictEqual(result.error, '');
         done();
       };
 
-      head(userOptions, reader, displayResult);
+      head(userOptions, streamPicker, displayResult);
       assert(stdin.setEncoding.calledWith('utf8'));
       assert(stdin.on.firstCall.calledWith('data'));
       assert(stdin.on.thirdCall.calledWith('end'));
