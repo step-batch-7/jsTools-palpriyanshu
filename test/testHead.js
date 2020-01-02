@@ -1,5 +1,5 @@
 const assert = require('chai').assert;
-const { fake, restore } = require('sinon');
+const { fake } = require('sinon');
 
 const {
   parseOptions,
@@ -66,10 +66,6 @@ describe('loadContents', function () {
   const defaultHeadLines = 10;
   beforeEach(function () {
     stream = { setEncoding: fake(), on: fake(), destroy: fake() };
-  });
-
-  afterEach(function () {
-    restore();
   });
 
   context('when filePath is given', function () {
@@ -175,9 +171,6 @@ describe('extractFirstNLines', function () {
 });
 
 describe('head', function () {
-  afterEach(function () {
-    restore();
-  });
 
   context('when file is given', function () {
     let stream;
