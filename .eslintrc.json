@@ -13,6 +13,14 @@
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "overrides": [
+        {
+            "files": ["test*.js"],
+            "rules": {
+                "max-statements": "off"
+            }
+        }
+    ],
     "rules": {
         "indent": [
             "error",
