@@ -4,7 +4,7 @@ const { fake, restore } = require('sinon');
 const {
   parseOptions,
   isValidLineCount,
-  selectReadStream,
+  getReadStream,
   loadContents,
   extractFirstNLines,
   head
@@ -45,7 +45,7 @@ describe('isValidLineCount', function () {
   });
 });
 
-describe('selectReadStream', function () {
+describe('getReadStream', function () {
   let reader;
   beforeEach(() => {
     reader = { stdin: {}, createReadStream: function () { } };
@@ -53,11 +53,11 @@ describe('selectReadStream', function () {
 
   it('should createReadStream when file path is given', function () {
     const stream = reader.createReadStream('one.txt');
-    assert.strictEqual(selectReadStream('one.txt', reader), stream);
+    assert.strictEqual(getReadStream('one.txt', reader), stream);
   });
 
   it('should give stdin when file path is not given', function () {
-    assert.strictEqual(selectReadStream('', reader), reader.stdin);
+    assert.strictEqual(getReadStream('', reader), reader.stdin);
   });
 });
 
@@ -65,7 +65,7 @@ describe('loadContents', function () {
   let stream;
   const defaultHeadLines = 10;
   beforeEach(function () {
-    stream = { setEncoding: fake(), on: fake(), pause: fake() };
+    stream = { setEncoding: fake(), on: fake(), destroy: fake() };
   });
 
   afterEach(function () {
@@ -77,10 +77,10 @@ describe('loadContents', function () {
 
       const afterLoading = function (contents) {
         assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
-        write({ output: 'abc', error: '' });
+        callBack({ output: 'abc', error: '' });
       };
 
-      const write = (result) => {
+      const callBack = (result) => {
         assert.strictEqual(result.output, 'abc');
         assert.strictEqual(result.error, '');
         done();
@@ -98,9 +98,9 @@ describe('loadContents', function () {
       const errMsg = `head: ${err.path}: No such file or directory`;
       const afterLoading = function (contents) {
         assert.deepStrictEqual(contents, { lines: '', error: errMsg });
-        write({ output: '', error: errMsg });
+        callBack({ output: '', error: errMsg });
       };
-      const write = (result) => {
+      const callBack = (result) => {
         assert.strictEqual(result.output, '');
         assert.strictEqual(result.error, errMsg);
         done();
@@ -117,10 +117,10 @@ describe('loadContents', function () {
     it('should load the lines when content is present', function (done) {
       const afterLoading = function (contents) {
         assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
-        write({ output: 'abc', error: '' });
+        callBack({ output: 'abc', error: '' });
       };
 
-      const write = (result) => {
+      const callBack = (result) => {
         assert.strictEqual(result.output, 'abc');
         assert.strictEqual(result.error, '');
         done();
@@ -141,7 +141,7 @@ describe('loadContents', function () {
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
       stream.on.firstCall.lastArg('123');
-      assert(stream.on.calledThrice), assert(stream.pause.calledOnce);
+      assert(stream.on.calledThrice), assert(stream.destroy.calledOnce);
       stream.on.thirdCall.lastArg();
       assert(afterLoading.calledWith({ error: '', lines: '123' })); 
       done();
@@ -190,13 +190,13 @@ describe('head', function () {
       };
 
       const reader = { createReadStream, stdin: {} };
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
         assert.strictEqual(result.error, '');
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
@@ -213,13 +213,13 @@ describe('head', function () {
       };
 
       const reader = { createReadStream, stdin: {} };
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, 'abc');
         assert.strictEqual(result.error, '');
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
@@ -238,13 +238,13 @@ describe('head', function () {
       const reader = { createReadStream, stdin: {} };
       const err = { path: 'badFile.txt' };
       const errMsg = `head: ${err.path}: No such file or directory`;
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, '');
         assert.strictEqual(result.error, errMsg);
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -261,13 +261,13 @@ describe('head', function () {
 
       const reader = { createReadStream, stdin: {} };
       const err = { path: 'one.txt' };
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, '');
         assert.strictEqual(result.error, 'head: illegal line count -- 0');
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -283,13 +283,13 @@ describe('head', function () {
 
       const reader = { createReadStream, stdin: {} };
       const err = { path: 'one.txt' };
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, '');
         assert.strictEqual(result.error, 'head: illegal line count -- m');
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -306,13 +306,13 @@ describe('head', function () {
       const userOptions = [''];
 
       const reader = { createReadStream: function () { }, stdin };
-      const write = (result) => {
+      const displayResult = (result) => {
         assert.strictEqual(result.output, '1\n2\n3\n4\n5\n6\n7\n8\n9\n10');
         assert.strictEqual(result.error, '');
         done();
       };
 
-      head(userOptions, reader, write);
+      head(userOptions, reader, displayResult);
       assert(stdin.setEncoding.calledWith('utf8'));
       assert(stdin.on.firstCall.calledWith('data'));
       assert(stdin.on.thirdCall.calledWith('end'));

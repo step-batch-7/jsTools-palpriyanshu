@@ -12,7 +12,7 @@ const loadContents = function (stream, num, afterLoading) {
   const onData = (data) => {
     count++;
     if (count >= num) {
-      stream.pause();
+      stream.destroy();
     }
     content.lines = data;
   };
@@ -26,7 +26,7 @@ const loadContents = function (stream, num, afterLoading) {
   stream.on('end', () => afterLoading(content));
 };
 
-const selectReadStream = function (fileName, reader) {
+const getReadStream = function (fileName, reader) {
   if (fileName) {
     return reader.createReadStream(fileName);
   }
@@ -49,26 +49,29 @@ const parseOptions = function (userOptions) {
   return { fileName: userOptions.join(''), num: 10 };
 };
 
-const head = function (userOptions, reader, write) {
+const head = function (userOptions, reader, callBack) {
   const headOptions = parseOptions(userOptions);
 
   if (!isValidLineCount(headOptions.num)) {
-    write({ output: '', 
+    callBack({ output: '', 
       error: `head: illegal line count -- ${headOptions.num}` });
     return;
   }
 
-  const readStream = selectReadStream(headOptions.fileName, reader);
-  loadContents(readStream, headOptions.num, (content) => {
+  const readStream = getReadStream(headOptions.fileName, reader);
+
+  const afterLoading = (content) => {
     const headLines = extractFirstNLines(content.lines, headOptions.num);
-    write({ output: headLines, error: content.error });
-  });
+    callBack({ output: headLines, error: content.error });
+  };
+  
+  loadContents(readStream, headOptions.num, afterLoading);
 };
 
 module.exports = {
   parseOptions,
   isValidLineCount,
-  selectReadStream,
+  getReadStream,
   loadContents,
   extractFirstNLines,
   head
