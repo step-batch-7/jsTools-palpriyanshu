@@ -15,7 +15,7 @@
     },
     "overrides": [
         {
-            "files": ["test*.js"],
+            "files": ["*Test.js"],
             "rules": {
                 "max-statements": "off"
             }
