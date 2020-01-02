@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "allTest": "mocha && ./runAppTests.sh appTest/*.test && eslint src test"
+    "allTest": "mocha && ./runAppTests.sh appTest/*.test && eslint ./"
   },
   "repository": {
     "type": "git",
