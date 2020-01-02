@@ -1,6 +1,7 @@
 const { createReadStream } = require('fs');
 const { stderr, stdout, stdin } = process;
 const { head } = require('./src/headLib.js');
+const StreamPicker = require('./src/streamPicker.js');
 
 const displayResult = function (result) {
   stdout.write(result.output);
