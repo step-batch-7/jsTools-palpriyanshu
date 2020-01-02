@@ -91,6 +91,7 @@ describe('loadContents', function () {
       assert(stream.on.thirdCall.calledWith('end'));
       stream.on.firstCall.lastArg('abc');
       stream.on.thirdCall.lastArg();
+      assert(stream.destroy.notCalled);
     });
 
     it('should not load the lines when file does not exists', function (done) {
@@ -110,6 +111,7 @@ describe('loadContents', function () {
       assert(stream.setEncoding.calledWith('utf8'));
       assert(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
+      assert(stream.destroy.notCalled);
     });
   });
 
@@ -131,6 +133,8 @@ describe('loadContents', function () {
       assert(stream.on.firstCall.calledWith('data'));
       assert(stream.on.thirdCall.calledWith('end'));
       stream.on.firstCall.lastArg('abc');
+      assert(stream.on.calledThrice);
+      assert(stream.destroy.notCalled);
       stream.on.thirdCall.lastArg();
     });
 
@@ -178,7 +182,7 @@ describe('head', function () {
   context('when file is given', function () {
     let stream;
     beforeEach(function () {
-      stream = { setEncoding: fake(), on: fake(), pause: fake() };
+      stream = { setEncoding: fake(), on: fake(), destroy: fake() };
     });
 
     it('should give 10 lines of file for default case ', function (done) {
@@ -299,7 +303,7 @@ describe('head', function () {
   context('when file is not given', function () {
     let stdin;
     beforeEach(function () {
-      stdin = { setEncoding: fake(), on: fake(), pause: fake() };
+      stdin = { setEncoding: fake(), on: fake(), destroy: fake() };
     });
 
     it('should load the 10 lines from stdin for default case', function (done) {

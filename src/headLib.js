@@ -1,20 +1,20 @@
-const extractFirstNLines = function (contents, num) {
+const extractFirstNLines = function (contents, lineCount) {
   const firstIndex = 0;
   const listOfLines = contents.split('\n');
-  const extractedLines = listOfLines.slice(firstIndex, num);
+  const extractedLines = listOfLines.slice(firstIndex, lineCount);
   return extractedLines.join('\n');
 };
 
-const loadContents = function (stream, num, afterLoading) {
+const loadContents = function (stream, lineCount, afterLoading) {
   stream.setEncoding('utf8');
   const content = { lines: '', error: '' };
   let count = 0;
   const onData = (data) => {
     count++;
-    if (count >= num) {
+    if (count >= lineCount) {
       stream.destroy();
     }
-    content.lines = data;
+    content.lines += data;
   };
   stream.on('data', onData);
 
@@ -49,11 +49,11 @@ const parseOptions = function (userOptions) {
   return { fileName: userOptions.join(''), num: 10 };
 };
 
-const head = function (userOptions, reader, callBack) {
+const head = function (userOptions, reader, displayResult) {
   const headOptions = parseOptions(userOptions);
 
   if (!isValidLineCount(headOptions.num)) {
-    callBack({ output: '', 
+    displayResult({ output: '', 
       error: `head: illegal line count -- ${headOptions.num}` });
     return;
   }
@@ -62,7 +62,7 @@ const head = function (userOptions, reader, callBack) {
 
   const afterLoading = (content) => {
     const headLines = extractFirstNLines(content.lines, headOptions.num);
-    callBack({ output: headLines, error: content.error });
+    displayResult({ output: headLines, error: content.error });
   };
   
   loadContents(readStream, headOptions.num, afterLoading);

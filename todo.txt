@@ -81,7 +81,7 @@ node head.js -n 3 one.txt
 ✔️ 2.b   node head.js -n 0 one.txt
        head: illegal line count -- 0
 
-✔️  2.c   node head.js -p 0 one.txt
+  2.c   node head.js -p 0 one.txt
        head: illegal option -- p
        usage: head [-n lines | -c bytes] [file ...]
 
