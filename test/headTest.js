@@ -4,7 +4,7 @@ const { fake } = require('sinon');
 const {
   parseOptions,
   isValidLineCount,
-  loadContents,
+  readStream,
   extractFirstNLines,
   head
 } = require('../src/headLib.js');
@@ -44,7 +44,7 @@ describe('isValidLineCount', function () {
   });
 });
 
-describe('loadContents', function () {
+describe('readStream', function () {
   let stream;
   const defaultHeadLines = 10;
   beforeEach(function () {
@@ -54,7 +54,7 @@ describe('loadContents', function () {
   context('when filePath is given', function () {
     it('should load the lines when filePath is present', function (done) {
 
-      const afterLoading = function (contents) {
+      const afterReading = function (contents) {
         assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
         callBack({ output: 'abc', error: '' });
       };
@@ -64,7 +64,7 @@ describe('loadContents', function () {
         assert.strictEqual(result.error, '');
         done();
       };
-      loadContents(stream, defaultHeadLines, afterLoading);
+      readStream(stream, defaultHeadLines, afterReading);
       assert.ok(stream.setEncoding.calledWith('utf8'));
       assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('abc');
@@ -74,7 +74,7 @@ describe('loadContents', function () {
     it('should not load the lines when file does not exists', function (done) {
       const err = { path: 'badFile.txt' };
       const errMsg = `head: ${err.path}: No such file or directory`;
-      const afterLoading = function (contents) {
+      const afterReading = function (contents) {
         assert.deepStrictEqual(contents, { lines: '', error: errMsg });
         callBack({ output: '', error: errMsg });
       };
@@ -84,7 +84,7 @@ describe('loadContents', function () {
         done();
       };
 
-      loadContents(stream, defaultHeadLines, afterLoading);
+      readStream(stream, defaultHeadLines, afterReading);
       assert.ok(stream.setEncoding.calledWith('utf8'));
       assert.ok(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
@@ -94,7 +94,7 @@ describe('loadContents', function () {
 
   context('when filePath is not given', function () {
     it('should load the lines when content is present', function (done) {
-      const afterLoading = function (contents) {
+      const afterReading = function (contents) {
         assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
         callBack({ output: 'abc', error: '' });
       };
@@ -105,7 +105,7 @@ describe('loadContents', function () {
         done();
       };
 
-      loadContents(stream, defaultHeadLines, afterLoading);
+      readStream(stream, defaultHeadLines, afterReading);
       assert.ok(stream.setEncoding.calledWith('utf8'));
       assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('abc');
@@ -114,14 +114,14 @@ describe('loadContents', function () {
     });
 
     it('should wait for stdin when content is absent', function (done) {
-      const afterLoading = fake(), lineCount = 1;
-      loadContents(stream, lineCount, afterLoading);
+      const afterReading = fake(), lineCount = 1;
+      readStream(stream, lineCount, afterReading);
       assert.ok(stream.setEncoding.calledWith('utf8'));
       assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('123');
       assert.ok(stream.on.calledTwice);
       assert.ok(stream.destroy.calledOnce);
-      assert.ok(afterLoading.calledWith({ error: '', lines: '123' })); 
+      assert.ok(afterReading.calledWith({ error: '', lines: '123' })); 
       done();
     });
   });

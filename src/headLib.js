@@ -5,7 +5,7 @@ const extractFirstNLines = function (contents, lineCount) {
   return extractedLines.join('\n');
 };
 
-const loadContents = function (stream, lineCount, afterLoading) {
+const readStream = function (stream, lineCount, afterReading) {
   stream.setEncoding('utf8');
   const content = { lines: '', error: '' };
   let count = 0;
@@ -15,13 +15,13 @@ const loadContents = function (stream, lineCount, afterLoading) {
       stream.destroy();
     }
     content.lines = data;
-    afterLoading(content);
+    afterReading(content);
   };
   stream.on('data', onData);
 
   stream.on('error', (err) => {
     content.error = `head: ${err.path}: No such file or directory`;
-    afterLoading(content);
+    afterReading(content);
   });
 };
 
@@ -50,20 +50,20 @@ const head = function (userOptions, streamPicker, displayResult) {
     return;
   }
 
-  const readStream = streamPicker.pick(headOptions.fileName);
+  const readableStream = streamPicker.pick(headOptions.fileName);
 
-  const afterLoading = (content) => {
+  const afterReading = (content) => {
     const headLines = extractFirstNLines(content.lines, headOptions.num); 
     displayResult({ output: headLines, error: content.error });
   };
   
-  loadContents(readStream, headOptions.num, afterLoading);
+  readStream(readableStream, headOptions.num, afterReading);
 };
 
 module.exports = {
   parseOptions,
   isValidLineCount,
-  loadContents,
+  readStream,
   extractFirstNLines,
   head
 };
