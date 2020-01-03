@@ -16,17 +16,17 @@ const parseOptions = function (userOptions) {
   let index = 0;
   if (userOptions[index] === '-n') {
     const [, , fileName] = userOptions;
-    return { fileName, num: userOptions[++index] };
+    return {fileName, num: userOptions[++index]};
   }
-  return { fileName: userOptions.join(''), num: 10 };
+  return {fileName: userOptions.join(''), num: 10};
 };
 
 const head = function (userOptions, streamPicker, StreamReader, displayResult) {
   const headOptions = parseOptions(userOptions);
 
   if (!isValidLineCount(headOptions.num)) {
-    displayResult({ output: '', 
-      error: `head: illegal line count -- ${headOptions.num}` });
+    displayResult({output: '', 
+      error: `head: illegal line count -- ${headOptions.num}`});
     return;
   }
 
@@ -34,7 +34,7 @@ const head = function (userOptions, streamPicker, StreamReader, displayResult) {
 
   const afterReading = (content) => {
     const headLines = extractFirstNLines(content.lines, headOptions.num); 
-    displayResult({ output: headLines, error: content.error });
+    displayResult({output: headLines, error: content.error});
   };
 
   const streamReader = new StreamReader(readableStream);

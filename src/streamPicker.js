@@ -5,7 +5,7 @@ class StreamPicker{
   }
 
   pick(filePath){
-    return filePath? this.createReadStream(filePath): this.stdin;
+    return filePath ? this.createReadStream(filePath) : this.stdin;
   }
 }
 

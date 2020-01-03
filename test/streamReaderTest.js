@@ -6,7 +6,7 @@ describe('StreamReader', function () {
   let stream;
   const defaultHeadLines = 10;
   beforeEach(function () {
-    stream = { setEncoding: fake(), on: fake(), destroy: fake() };
+    stream = {setEncoding: fake(), on: fake(), destroy: fake()};
   });
 
   context('when filePath is given', function () {
@@ -14,8 +14,8 @@ describe('StreamReader', function () {
       const streamReader = new StreamReader(stream);
 
       const afterReading = function (contents) {
-        assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
-        callBack({ output: 'abc', error: '' });
+        assert.deepStrictEqual(contents, {lines: 'abc', error: ''});
+        callBack({output: 'abc', error: ''});
       };
 
       const callBack = (result) => {
@@ -32,12 +32,12 @@ describe('StreamReader', function () {
 
     it('should not load the lines when file does not exists', function (done) {
       const streamReader = new StreamReader(stream);
-      const err = { path: 'badFile.txt' };
+      const err = {path: 'badFile.txt'};
       const errMsg = `head: ${err.path}: No such file or directory`;
 
       const afterReading = function (contents) {
-        assert.deepStrictEqual(contents, { lines: '', error: errMsg });
-        callBack({ output: '', error: errMsg });
+        assert.deepStrictEqual(contents, {lines: '', error: errMsg});
+        callBack({output: '', error: errMsg});
       };
       const callBack = (result) => {
         assert.strictEqual(result.output, '');
@@ -58,8 +58,8 @@ describe('StreamReader', function () {
       const streamReader = new StreamReader(stream);
 
       const afterReading = function (contents) {
-        assert.deepStrictEqual(contents, { lines: 'abc', error: '' });
-        callBack({ output: 'abc', error: '' });
+        assert.deepStrictEqual(contents, {lines: 'abc', error: ''});
+        callBack({output: 'abc', error: ''});
       };
 
       const callBack = (result) => {
@@ -86,7 +86,7 @@ describe('StreamReader', function () {
       stream.on.firstCall.lastArg('123');
       assert.ok(stream.on.calledTwice);
       assert.ok(stream.destroy.calledOnce);
-      assert.ok(afterReading.calledWith({ error: '', lines: '123' }));
+      assert.ok(afterReading.calledWith({error: '', lines: '123'}));
       done();
     });
   });

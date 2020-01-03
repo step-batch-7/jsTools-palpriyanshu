@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
 const StreamReader = require('../src/streamReader.js');
-const { fake } = require('sinon');
+const {fake} = require('sinon');
 
 const {
   parseOptions,
@@ -11,32 +11,30 @@ const {
 
 describe('parseOptions', function () {
   it('should parsed the userOptions when only one file is given', function () {
-    const expected = { fileName: 'one.txt', num: 10 };
+    const expected = {fileName: 'one.txt', num: 10};
     assert.deepStrictEqual(parseOptions(['one.txt']), expected);
   });
 
   it('should parsed the userOptions when lines is specified', function () {
-    const expected = { fileName: 'one.txt', num: 3 };
+    const expected = {fileName: 'one.txt', num: 3};
     const count = 3;
     assert.deepStrictEqual(parseOptions(['-n', count, 'one.txt']), expected);
   });
 
   it('should parsed the userOptions when no file & line is given', function () {
     const userOptions = [''];
-    const expected = { fileName: '', num: 10 };
+    const expected = {fileName: '', num: 10};
     assert.deepStrictEqual(parseOptions(userOptions), expected);
   });
 });
 
 describe('isValidLineCount', function () {
   it('should validate when line count is positive integer', function () {
-    const count =2;
-    assert.ok(isValidLineCount(count));
+    assert.ok(isValidLineCount(2));
   });
 
   it('should invalidate when line count is 0 ', function () {
-    const count =0;
-    assert.notOk(isValidLineCount(count));
+    assert.notOk(isValidLineCount(0));
   });
 
   it('should invalidate when line count is not a integer ', function () {
@@ -62,13 +60,12 @@ describe('extractFirstNLines', function () {
     assert.deepStrictEqual(extractFirstNLines(content, num), '');
   });
 
-
 });
 
 describe('head', function () {
   let stream, streamPicker;
   beforeEach(function () {
-    stream = { setEncoding: fake(), on: fake(), destroy: fake() };
+    stream = {setEncoding: fake(), on: fake(), destroy: fake()};
     streamPicker = {};
   });
 
@@ -120,7 +117,7 @@ describe('head', function () {
       return stream;
     };
 
-    const err = { path: 'badFile.txt' };
+    const err = {path: 'badFile.txt'};
     const errMsg = `head: ${err.path}: No such file or directory`;
     const displayResult = (result) => {
       assert.strictEqual(result.output, '');
@@ -143,7 +140,7 @@ describe('head', function () {
       return stream;
     };
 
-    const err = { path: 'one.txt' };
+    const err = {path: 'one.txt'};
     const displayResult = (result) => {
       assert.strictEqual(result.output, '');
       assert.strictEqual(result.error, 'head: illegal line count -- 0');
@@ -164,7 +161,7 @@ describe('head', function () {
       return stream;
     };
 
-    const err = { path: 'one.txt' };
+    const err = {path: 'one.txt'};
     const displayResult = (result) => {
       assert.strictEqual(result.output, '');
       assert.strictEqual(result.error, 'head: illegal line count -- m');
@@ -177,5 +174,3 @@ describe('head', function () {
     stream.on.secondCall.lastArg(err);
   });
 });
-
-

@@ -2,7 +2,7 @@ class StreamReader{
   constructor(stream){
     this.stream = stream;
     this.count = 0;
-    this.content = { lines: '', error: '' };
+    this.content = {lines: '', error: ''};
   }
 
   read(lineCount, afterReading) {

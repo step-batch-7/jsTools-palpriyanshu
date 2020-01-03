@@ -17,7 +17,9 @@
         {
             "files": ["*Test.js"],
             "rules": {
-                "max-statements": "off"
+                "max-statements": "off",
+                "max-len": "warn",
+                "no-magic-numbers": "off"
             }
         }
     ],
@@ -86,6 +88,16 @@
         "no-proto": "error",
         "prefer-spread": "warn",
         "no-useless-call": "error",
-        "no-param-reassign": "error"
+        "no-param-reassign": "error",
+        "space-infix-ops": "error",
+        "no-multi-spaces": "error",
+        "object-curly-spacing": "error",
+        "semi-spacing": "error",
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1
+            }
+        ]
     }
 }
