@@ -57,7 +57,7 @@
         "id-length": "error",
         "key-spacing": "error",
         "max-len": "error",
-        "max-params": "error",
+        "max-params": ["error",4],
         "max-statements": "error",
         "no-console": "error",
         "no-else-return": "error",
