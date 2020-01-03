@@ -65,12 +65,10 @@ describe('loadContents', function () {
         done();
       };
       loadContents(stream, defaultHeadLines, afterLoading);
-      assert(stream.setEncoding.calledWith('utf8'));
-      assert(stream.on.firstCall.calledWith('data'));
-      assert(stream.on.thirdCall.calledWith('end'));
+      assert.ok(stream.setEncoding.calledWith('utf8'));
+      assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('abc');
-      stream.on.thirdCall.lastArg();
-      assert(stream.destroy.notCalled);
+      assert.ok(stream.destroy.notCalled);
     });
 
     it('should not load the lines when file does not exists', function (done) {
@@ -87,10 +85,10 @@ describe('loadContents', function () {
       };
 
       loadContents(stream, defaultHeadLines, afterLoading);
-      assert(stream.setEncoding.calledWith('utf8'));
-      assert(stream.on.secondCall.calledWith('error'));
+      assert.ok(stream.setEncoding.calledWith('utf8'));
+      assert.ok(stream.on.secondCall.calledWith('error'));
       stream.on.secondCall.lastArg(err);
-      assert(stream.destroy.notCalled);
+      assert.ok(stream.destroy.notCalled);
     });
   });
 
@@ -108,25 +106,22 @@ describe('loadContents', function () {
       };
 
       loadContents(stream, defaultHeadLines, afterLoading);
-      assert(stream.setEncoding.calledWith('utf8'));
-      assert(stream.on.firstCall.calledWith('data'));
-      assert(stream.on.thirdCall.calledWith('end'));
+      assert.ok(stream.setEncoding.calledWith('utf8'));
+      assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('abc');
-      assert(stream.on.calledThrice);
-      assert(stream.destroy.notCalled);
-      stream.on.thirdCall.lastArg();
+      assert.ok(stream.on.calledTwice);
+      assert.ok(stream.destroy.notCalled);
     });
 
     it('should wait for stdin when content is absent', function (done) {
       const afterLoading = fake(), lineCount = 1;
       loadContents(stream, lineCount, afterLoading);
-      assert(stream.setEncoding.calledWith('utf8'));
-      assert(stream.on.firstCall.calledWith('data'));
-      assert(stream.on.thirdCall.calledWith('end'));
+      assert.ok(stream.setEncoding.calledWith('utf8'));
+      assert.ok(stream.on.firstCall.calledWith('data'));
       stream.on.firstCall.lastArg('123');
-      assert(stream.on.calledThrice), assert(stream.destroy.calledOnce);
-      stream.on.thirdCall.lastArg();
-      assert(afterLoading.calledWith({ error: '', lines: '123' })); 
+      assert.ok(stream.on.calledTwice);
+      assert.ok(stream.destroy.calledOnce);
+      assert.ok(afterLoading.calledWith({ error: '', lines: '123' })); 
       done();
     });
   });
@@ -175,11 +170,9 @@ describe('head', function () {
     };
     
     head(userOptions, streamPicker, displayResult);
-    assert(stream.setEncoding.calledWith('utf8'));
-    assert(stream.on.firstCall.calledWith('data'));
-    assert(stream.on.thirdCall.calledWith('end'));
+    assert.ok(stream.setEncoding.calledWith('utf8'));
+    assert.ok(stream.on.firstCall.calledWith('data'));
     stream.on.firstCall.lastArg('1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11');
-    stream.on.thirdCall.lastArg();
   });
 
   it('should give specified lines when line count is given', function (done) {
@@ -197,11 +190,9 @@ describe('head', function () {
     };
 
     head(userOptions, streamPicker, displayResult);
-    assert(stream.setEncoding.calledWith('utf8'));
-    assert(stream.on.firstCall.calledWith('data'));
-    assert(stream.on.thirdCall.calledWith('end'));
+    assert.ok(stream.setEncoding.calledWith('utf8'));
+    assert.ok(stream.on.firstCall.calledWith('data'));
     stream.on.firstCall.lastArg('abc');
-    stream.on.thirdCall.lastArg();
   });
 
   it('should give error when wrong file is present', function (done) {
@@ -221,8 +212,8 @@ describe('head', function () {
     };
 
     head(userOptions, streamPicker, displayResult);
-    assert(stream.setEncoding.calledWith('utf8'));
-    assert(stream.on.secondCall.calledWith('error'));
+    assert.ok(stream.setEncoding.calledWith('utf8'));
+    assert.ok(stream.on.secondCall.calledWith('error'));
     stream.on.secondCall.lastArg(err);
   });
 
@@ -243,20 +234,19 @@ describe('head', function () {
     };
 
     head(userOptions, streamPicker, displayResult);
-    assert(stream.setEncoding.calledWith('utf8'));
-    assert(stream.on.secondCall.calledWith('error'));
+    assert.ok(stream.setEncoding.calledWith('utf8'));
+    assert.ok(stream.on.secondCall.calledWith('error'));
     stream.on.secondCall.lastArg(err);
   });
 
   it('should give error when line count is not integer', function (done) {
     const userOptions = ['-n', 'm', 'one.txt'];
 
-    const createReadStream = function (fileName) {
-      assert.strictEqual(fileName, 'badFile.txt');
+    streamPicker.pick = function (filePath) {
+      assert.strictEqual(filePath, 'one.txt');
       return stream;
     };
 
-    const reader = { createReadStream, stdin: {} };
     const err = { path: 'one.txt' };
     const displayResult = (result) => {
       assert.strictEqual(result.output, '');
@@ -264,9 +254,9 @@ describe('head', function () {
       done();
     };
 
-    head(userOptions, reader, displayResult);
-    assert(stream.setEncoding.calledWith('utf8'));
-    assert(stream.on.secondCall.calledWith('error'));
+    head(userOptions, streamPicker, displayResult);
+    assert.ok(stream.setEncoding.calledWith('utf8'));
+    assert.ok(stream.on.secondCall.calledWith('error'));
     stream.on.secondCall.lastArg(err);
   });
 });

@@ -14,7 +14,8 @@ const loadContents = function (stream, lineCount, afterLoading) {
     if (count >= lineCount) {
       stream.destroy();
     }
-    content.lines += data;
+    content.lines = data;
+    afterLoading(content);
   };
   stream.on('data', onData);
 
@@ -22,8 +23,6 @@ const loadContents = function (stream, lineCount, afterLoading) {
     content.error = `head: ${err.path}: No such file or directory`;
     afterLoading(content);
   });
-
-  stream.on('end', () => afterLoading(content));
 };
 
 const isValidLineCount = function (count) {
@@ -54,7 +53,7 @@ const head = function (userOptions, streamPicker, displayResult) {
   const readStream = streamPicker.pick(headOptions.fileName);
 
   const afterLoading = (content) => {
-    const headLines = extractFirstNLines(content.lines, headOptions.num);
+    const headLines = extractFirstNLines(content.lines, headOptions.num); 
     displayResult({ output: headLines, error: content.error });
   };
   
