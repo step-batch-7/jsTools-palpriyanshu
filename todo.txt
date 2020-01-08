@@ -41,7 +41,7 @@ v0.0.2
 ✔️    2.c. cat badFile.txt | node head.js  (wrong file)
 
 * appTest
-      2.a  node head.js
+✔️      2.a  node head.js
 
 ✔️     2.b. cat one.txt | node head.js
        1
@@ -64,6 +64,7 @@ task
 ✔️  3.send stdin object from main
 ✔️  4.merge stdin function in loadContents function
 ✔️  5.test callBack
+   6.modify parser
 ------------------------------------------------------------
 v0.0.3
 node head.js -n 3 one.txt
